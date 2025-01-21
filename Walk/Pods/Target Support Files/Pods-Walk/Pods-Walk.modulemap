@@ -1,6 +1,0 @@
-framework module Pods_Walk {
-  umbrella header "Pods-Walk-umbrella.h"
-
-  export *
-  module * { export * }
-}

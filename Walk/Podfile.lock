@@ -1,20 +1,22 @@
 PODS:
-  - NMapsGeometry (1.0.2)
-  - NMapsMap (3.20.0):
-    - NMapsGeometry
+  - GoogleMaps (9.2.0):
+    - GoogleMaps/Maps (= 9.2.0)
+  - GoogleMaps/Maps (9.2.0)
+  - GooglePlaces (9.2.0)
 
 DEPENDENCIES:
-  - NMapsMap
+  - GoogleMaps
+  - GooglePlaces
 
 SPEC REPOS:
   trunk:
-    - NMapsGeometry
-    - NMapsMap
+    - GoogleMaps
+    - GooglePlaces
 
 SPEC CHECKSUMS:
-  NMapsGeometry: 4e02554fa9880ef02ed96b075dc84355d6352479
-  NMapsMap: bc5ea361ba29fc7c83dd8998f4497a77c75b4c66
+  GoogleMaps: 634ec3ca99698b31ca2253d64f017217d70cfb38
+  GooglePlaces: f997a80fb7b88233ad53aa8c9d5f092c86ceae54
 
-PODFILE CHECKSUM: fe4ddd84b2f3c1b108118e98b3102f3c58037c2d
+PODFILE CHECKSUM: 15e6f40f16a6a5e921ffea1e2c1edc724cfaacb1
 
 COCOAPODS: 1.16.2
