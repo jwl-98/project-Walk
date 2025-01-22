@@ -12,6 +12,7 @@ import GooglePlaces
 class MainViewController: UIViewController, GMSMapViewDelegate {
     
     private var mapView: GMSMapView!
+    private let sheetVC = SheetViewController()
     let seoulLat = 37.526451
     let seoulLong = 127.020485
     
@@ -73,8 +74,18 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
         GMSPlacesClient.shared().searchByText(with: request, callback: callback)
     }
     
+    private func sheetSetting() {
+        if let sheet = sheetVC.sheetPresentationController {
+            sheet.detents = [.medium()]
+            //시트 상단바 표시 옵션
+            sheet.prefersGrabberVisible = true
+        }
+        present(sheetVC, animated: true)
+    }
+    
      func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
          print("핀이 눌렸음")
+         sheetSetting()
         if let title = marker.title {
                 print("marker title: \(title)")
         }
