@@ -21,7 +21,8 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
         let camera = GMSCameraPosition.camera(withLatitude: seoulLat, longitude: seoulLong, zoom: 15.0)
         mapView = GMSMapView(frame: .zero, camera: camera)
         self.view = mapView
-        placeSearch()
+        mapView.settings.scrollGestures = true
+        mapView.settings.zoomGestures = true
         mapView.delegate = self
     }
     
@@ -31,17 +32,18 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
         let mapCenter = CLLocationCoordinate2DMake(mapView.camera.target.latitude, mapView.camera.target.longitude)
         let marker = GMSMarker(position: mapCenter)
         marker.map = mapView
+        placeSearch()
     }
     
     func placeSearch() {
 
-        let myProperties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate].map {$0.rawValue}
+        let myProperties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.photos, GMSPlaceProperty.iconImageURL].map {$0.rawValue}
         let request = GMSPlaceSearchByTextRequest(textQuery:"park in seoul", placeProperties:myProperties)
         request.includedType = "park"
         request.maxResultCount = 20
         request.rankPreference = .distance
         request.isStrictTypeFiltering = true
-        request.locationBias =  GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(seoulLat, seoulLong), 2000.0)
+        request.locationBias =  GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(seoulLat, seoulLong), 3000.0)
         
         // Array to hold the places in the response
         var placeResults: [GMSPlace] = []
@@ -58,10 +60,10 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
                 return
             }
             placeResults = results
-           
             //공원 위치 표시 마커
             for result in placeResults {
                 let marker = GMSMarker(position: result.coordinate)
+                marker.appearAnimation = .pop
                 marker.icon = GMSMarker.markerImage(with: .blue)
                 marker.title = result.name!
                 marker.map = self.mapView
@@ -69,6 +71,14 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
         }
         
         GMSPlacesClient.shared().searchByText(with: request, callback: callback)
+    }
+    
+     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+         print("핀이 눌렸음")
+        if let title = marker.title {
+                print("marker title: \(title)")
+        }
+         return true
     }
     
 }
