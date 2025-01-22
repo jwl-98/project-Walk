@@ -16,7 +16,7 @@ class SheetView: UIView {
         view.backgroundColor = .white
         view.clipsToBounds = true
         view.layer.cornerRadius = CornerRadius.normal
-    
+        
         view.addSubview(parkImageView)
         view.addSubview(congestionLable)
         view.addSubview(parkNameLable)
@@ -76,7 +76,7 @@ class SheetView: UIView {
         let imageView = UIImageView()
         imageView.tintColor = .white
         imageView.image = UIImage(systemName: "toilet.circle.fill")
-      
+        
         return imageView
     }()
     
@@ -84,11 +84,11 @@ class SheetView: UIView {
         let imageView = UIImageView()
         imageView.tintColor = .white
         imageView.image = UIImage(systemName: "chevron.right")
-      
+        
         return imageView
     }()
     
-    private let tolietViewLable: UILabel = {
+    private let tolietViewLabel: UILabel = {
         let label = UILabel()
         
         label.text = "화장실 위치 확인하기"
@@ -99,7 +99,7 @@ class SheetView: UIView {
     }()
     
     private lazy var stackViewForToilet: UIStackView = {
-        let st = UIStackView(arrangedSubviews: [tolietSFIcon,tolietViewLable,rightSFIcon])
+        let st = UIStackView(arrangedSubviews: [tolietSFIcon,tolietViewLabel,rightSFIcon])
         st.distribution = .fill
         st.alignment = .center
         st.backgroundColor = Color.toiletBackGround
@@ -108,6 +108,7 @@ class SheetView: UIView {
         st.clipsToBounds = true
         st.layer.cornerRadius = CornerRadius.normal
         st.addSubview(tolietViewButton)
+        st.isLayoutMarginsRelativeArrangement = true
         
         return st
     }()
@@ -169,38 +170,41 @@ class SheetView: UIView {
         [stackViewForToilet].forEach { self.addSubview($0)}
         
         tolietViewButton.snp.makeConstraints {
+            $0.edges.equalTo(stackViewForToilet)
+        }
+        stackViewForToilet.snp.makeConstraints {
             $0.centerX.equalTo(mainView.snp.centerX)
             $0.top.equalTo(mainView.snp.bottom).offset(20)
             $0.height.equalTo(70)
             $0.width.equalTo(mainView.snp.width)
         }
-        stackViewForToilet.snp.makeConstraints {
-            $0.centerX.equalTo(tolietViewButton.snp.centerX)
-            $0.top.equalTo(tolietViewButton.snp.top)
-            $0.height.equalTo(tolietViewButton.snp.height)
-            $0.width.equalTo(tolietViewButton.snp.width)
-        }
         
         tolietSFIcon.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(Fedding.normal)
             $0.height.width.equalTo(38)
+            $0.centerY.equalToSuperview()
         }
-        tolietViewLable.snp.makeConstraints {
-            $0.width.equalTo(267)
+        tolietViewLabel.snp.makeConstraints {
+            $0.leading.equalTo(tolietSFIcon.snp.trailing).offset(10)
+            $0.trailing.equalTo(rightSFIcon.snp.leading).offset(-10)
+            $0.centerY.equalToSuperview()
         }
         rightSFIcon.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(Fedding.normal)
             $0.width.equalTo(15)
             $0.height.equalTo(24)
+            $0.centerY.equalToSuperview()
         }
         
     }
     
-
+    
 }
 
 
 
 @available(iOS 17.0, *)
 #Preview {
-   SheetViewController()
+    SheetViewController()
 }
 
