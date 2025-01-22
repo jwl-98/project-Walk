@@ -7,10 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		362AD3A49ED4A6289207A367 /* Pods_Walk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 079897EDD98A021027ED60AC /* Pods_Walk.framework */; };
 		E289CE222D3B7F2D00134D78 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = E289CE212D3B7F2D00134D78 /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0023CCD757CFF7E34769B766 /* Pods-Walk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Walk.release.xcconfig"; path = "Target Support Files/Pods-Walk/Pods-Walk.release.xcconfig"; sourceTree = "<group>"; };
+		079897EDD98A021027ED60AC /* Pods_Walk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Walk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		16DFA78AE1A461808D29BE2F /* Pods-Walk.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Walk.debug.xcconfig"; path = "Target Support Files/Pods-Walk/Pods-Walk.debug.xcconfig"; sourceTree = "<group>"; };
 		E289CE082D3B7F0900134D78 /* Walk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Walk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -41,17 +45,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				E289CE222D3B7F2D00134D78 /* SnapKit in Frameworks */,
+				362AD3A49ED4A6289207A367 /* Pods_Walk.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		80242EF9A003196904734BC1 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				16DFA78AE1A461808D29BE2F /* Pods-Walk.debug.xcconfig */,
+				0023CCD757CFF7E34769B766 /* Pods-Walk.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		E289CDFF2D3B7F0900134D78 = {
 			isa = PBXGroup;
 			children = (
 				E289CE0A2D3B7F0900134D78 /* Walk */,
 				E289CE092D3B7F0900134D78 /* Products */,
+				80242EF9A003196904734BC1 /* Pods */,
+				E43F6E452272D354E20B1E75 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -63,6 +79,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		E43F6E452272D354E20B1E75 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				079897EDD98A021027ED60AC /* Pods_Walk.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -70,9 +94,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E289CE1B2D3B7F0A00134D78 /* Build configuration list for PBXNativeTarget "Walk" */;
 			buildPhases = (
+				6F02BF210F94BE6AF73D9AA5 /* [CP] Check Pods Manifest.lock */,
 				E289CE042D3B7F0900134D78 /* Sources */,
 				E289CE052D3B7F0900134D78 /* Frameworks */,
 				E289CE062D3B7F0900134D78 /* Resources */,
+				D79BBC2F5AF5DDAA1EEC614B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -136,6 +162,48 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		6F02BF210F94BE6AF73D9AA5 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Walk-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D79BBC2F5AF5DDAA1EEC614B /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Walk/Pods-Walk-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Walk/Pods-Walk-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Walk/Pods-Walk-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		E289CE042D3B7F0900134D78 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -149,11 +217,13 @@
 /* Begin XCBuildConfiguration section */
 		E289CE1C2D3B7F0A00134D78 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 16DFA78AE1A461808D29BE2F /* Pods-Walk.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KNX528WB6D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Walk/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -179,11 +249,13 @@
 		};
 		E289CE1D2D3B7F0A00134D78 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0023CCD757CFF7E34769B766 /* Pods-Walk.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KNX528WB6D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Walk/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -244,7 +316,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -307,7 +379,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
