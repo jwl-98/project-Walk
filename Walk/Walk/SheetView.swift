@@ -33,17 +33,16 @@ class SheetView: UIView {
     }()
     //공원 이미지
     let parkImageView: UIImageView = {
-        let image = UIImageView()
+        var image = UIImageView()
         image.clipsToBounds = true
         image.layer.cornerRadius = CornerRadius.normal
-        image.image = UIImage(named: "parkImageDummy")
         
         return image
     }()
     
     //혼잡도 레이블
     let congestionLable: UILabel = {
-        let label = UILabel()
+        var label = UILabel()
         label.text = "혼잡"
         label.layer.cornerRadius  = CornerRadius.normal
         label.clipsToBounds = true
@@ -55,10 +54,11 @@ class SheetView: UIView {
     }()
     
     //공원이름 레이블
-    let parkNameLable: UILabel = {
+    var parkNameLable: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 20, weight: .bold)
         label.text = "공원이름"
+        label.numberOfLines = 0
         
         return label
     }()
@@ -113,6 +113,45 @@ class SheetView: UIView {
         return st
     }()
     
+    //MARK: 공원 관련 정보 탭 (시설, 행사)
+    
+    private let sectionLabel: UILabel = {
+        let label = UILabel()
+        label.text = "주요시설과 행사정보"
+        label.font = .systemFont(ofSize: 20, weight: .bold)
+        
+        return label
+    }()
+    
+    private lazy var subView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .red
+        view.clipsToBounds = true
+        view.layer.cornerRadius = CornerRadius.normal
+        view.addSubview(facilitiesLabel)
+        view.addSubview(eventLabel)
+        
+        return view
+    }()
+    //공원 시설 정보 표시 레이블
+    private let facilitiesLabel: UILabel = {
+        let label = UILabel()
+        label.text = "시설 관련 정보"
+        
+        return label
+    }()
+    
+    //행사 정보 표시 레이블
+    private let eventLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 17, weight: .semibold)
+        label.text = "행사 관련 정보"
+        
+        return label
+    }()
+    
+    
+    
     @objc
     func toiletButton() {
         print("화장실 버튼 눌림")
@@ -121,16 +160,31 @@ class SheetView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = Color.sheetColor
-        configureUI()
+        outsideViewConfigureUI()
+        MainViewConfigureUI()
         toiletConfigureUI()
+        subViewConfigureUI()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    private func configureUI() {
-        [mainView, leftTimeLabel].forEach {self.addSubview($0)}
+    private func outsideViewConfigureUI() {
+        [leftTimeLabel,sectionLabel].forEach {self.addSubview($0)}
+        
+        leftTimeLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(Fedding.normal)
+        }
+        
+        sectionLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalTo(20)
+        }
+
+    }
+    private func MainViewConfigureUI() {
+        self.addSubview(mainView)
         
         mainView.snp.makeConstraints {
             $0.top.equalTo(leftTimeLabel.snp.bottom).offset(Fedding.normal)
@@ -155,26 +209,20 @@ class SheetView: UIView {
         
         parkNameLable.snp.makeConstraints {
             $0.centerY.equalToSuperview()
+            $0.width.equalTo(174)
             $0.leading.equalTo(parkImageView.snp.trailing).offset(Fedding.normal)
         }
-        
-        
-        leftTimeLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(Fedding.normal)
-        }
-        
     }
     
     private func toiletConfigureUI() {
-        [stackViewForToilet].forEach { self.addSubview($0)}
+        self.addSubview(stackViewForToilet)
         
         tolietViewButton.snp.makeConstraints {
             $0.edges.equalTo(stackViewForToilet)
         }
         stackViewForToilet.snp.makeConstraints {
             $0.centerX.equalTo(mainView.snp.centerX)
-            $0.top.equalTo(mainView.snp.bottom).offset(20)
+            $0.top.equalTo(mainView.snp.bottom).offset(30)
             $0.height.equalTo(70)
             $0.width.equalTo(mainView.snp.width)
         }
@@ -196,6 +244,15 @@ class SheetView: UIView {
             $0.centerY.equalToSuperview()
         }
         
+    }
+    
+    private func subViewConfigureUI() {
+        self.addSubview(subView)
+        
+        subView.snp.makeConstraints {
+            $0.centerX.equalTo(mainView.snp.centerX)
+            $0.top.equalTo(sectionLabel.snp.bottom).offset(30)
+        }
     }
     
     

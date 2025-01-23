@@ -13,6 +13,7 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
     
     private var mapView: GMSMapView!
     private let sheetVC = SheetViewController()
+    private let placesClient = GMSPlacesClient.shared()
     let seoulLat = 37.526451
     let seoulLong = 127.020485
     
@@ -37,8 +38,8 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
     }
     
     func placeSearch() {
-
-        let myProperties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.photos, GMSPlaceProperty.iconImageURL].map {$0.rawValue}
+        
+        let myProperties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.placeID].map {$0.rawValue}
         let request = GMSPlaceSearchByTextRequest(textQuery:"park in seoul", placeProperties:myProperties)
         request.includedType = "park"
         request.maxResultCount = 20
@@ -60,18 +61,55 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
             guard let results = results as? [GMSPlace] else {
                 return
             }
+            //검색이 끝난 시점
             placeResults = results
+            
             //공원 위치 표시 마커
             for result in placeResults {
+                //검색 결과에 따른 핀 생성
                 let marker = GMSMarker(position: result.coordinate)
                 marker.appearAnimation = .pop
                 marker.icon = GMSMarker.markerImage(with: .blue)
                 marker.title = result.name!
                 marker.map = self.mapView
+                marker.userData = result.placeID
             }
         }
         
         GMSPlacesClient.shared().searchByText(with: request, callback: callback)
+    }
+    
+    func fetchPlaceImage(placeID: String, completion: @escaping (UIImage) -> ()) {
+        
+        // Specify the place data types to return (in this case, just photos).
+        let fields: GMSPlaceField = GMSPlaceField(rawValue: UInt64(UInt(GMSPlaceField.photos.rawValue)))
+        
+        placesClient.fetchPlace(fromPlaceID: placeID,
+                                placeFields: fields,
+                                sessionToken: nil, callback: {
+            (place: GMSPlace?, error: Error?) in
+            if let error = error {
+                print("An error occurred: \(error.localizedDescription)")
+                return
+            }
+            if let place = place {
+                // Get the metadata for the first photo in the place photo metadata list.
+                let photoMetadata: GMSPlacePhotoMetadata = place.photos![0]
+                
+                // Call loadPlacePhoto to display the bitmap and attribution.
+                self.placesClient.loadPlacePhoto(photoMetadata, callback: { (photo, error) -> Void in
+                    if let error = error {
+                        // TODO: Handle the error.
+                        print("Error loading photo metadata: \(error.localizedDescription)")
+                        return
+                    } else {
+                        // Display the first image and its attributions.
+                        guard let image = photo else {return}
+                        completion(image)
+                    }
+                })
+            }
+        })
     }
     
     private func sheetSetting() {
@@ -83,13 +121,28 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
         present(sheetVC, animated: true)
     }
     
-     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
-         print("핀이 눌렸음")
-         sheetSetting()
+    func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+        print("핀이 눌렸음")
+        //핀이 눌렸을 경우 sheet 표시
+        
         if let title = marker.title {
-                print("marker title: \(title)")
+            sheetVC.getParkData(parkName: title)
+            //기본 이미지 셋팅 (로딩 이미지)
+            sheetVC.getParkImage(parkImage: UIImage(systemName: "tree.fill")!)
+            print("marker title: \(title)")
         }
-         return true
+        
+        sheetSetting()
+        
+        if let placeID = marker.userData as? String {
+            fetchPlaceImage(placeID: placeID) { [weak self] parkImage in
+                guard let self = self else {return}
+                self.sheetVC.getParkImage(parkImage: parkImage)
+            }
+        }
+        
+        
+        return true
     }
     
 }

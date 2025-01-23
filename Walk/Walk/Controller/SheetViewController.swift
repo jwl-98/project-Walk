@@ -16,11 +16,22 @@ class SheetViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-
+    
+    
+    func getParkData(parkName: String) {
+        sheetView.parkNameLable.text = parkName
+        
+    }
+    
+    func getParkImage(parkImage: UIImage) {
+        
+        sheetView.parkImageView.image = parkImage
+    }
+    
 }
 
-@available(iOS 17.0, *)
-#Preview {
-    SheetViewController()
-}
-
+//@available(iOS 17.0, *)
+//#Preview {
+//    SheetViewController()
+//}
+//
