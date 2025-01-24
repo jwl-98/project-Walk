@@ -14,8 +14,8 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
     private var mapView: GMSMapView!
     private let sheetVC = SheetViewController()
     private let placesClient = GMSPlacesClient.shared()
-    let seoulLat = 37.526451
-    let seoulLong = 127.020485
+    let seoulLat =  37.5275
+    let seoulLong = 127.028
     
     override func loadView() {
         
@@ -124,6 +124,8 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
         print("핀이 눌렸음")
         //핀이 눌렸을 경우 sheet 표시
+        let origin = CLLocationCoordinate2D(latitude: seoulLat, longitude: seoulLong)
+        let destination = CLLocationCoordinate2D(latitude: marker.position.latitude, longitude: marker.position.longitude)
         
         if let title = marker.title {
             sheetVC.getParkData(parkName: title)
@@ -131,6 +133,7 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
             sheetVC.getParkImage(parkImage: UIImage(systemName: "tree.fill")!)
             print("marker title: \(title)")
         }
+        sheetVC.calculateRoute(origin: origin, destination: destination)
         
         sheetSetting()
         
