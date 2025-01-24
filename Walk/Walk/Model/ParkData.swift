@@ -6,7 +6,9 @@
 //
 
 import Foundation
+import UIKit
 
 struct ParkData {
     let parkName: String?
+    let parkImage: UIImage?
 }

@@ -64,10 +64,9 @@ class SheetView: UIView {
     }()
     
     //MARK: - 화장실 탭
-    private lazy var tolietViewButton: UIButton = {
+     lazy var tolietViewButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .clear
-        button.addTarget(self, action: #selector(toiletButton), for: .touchUpInside)
         
         return button
     }()
@@ -202,7 +201,8 @@ class SheetView: UIView {
         
         congestionLable.snp.makeConstraints {
             $0.height.equalTo(34)
-            $0.width.equalTo(41)
+            $0.width.equalTo(180)
+            $0.trailing.equalToSuperview().inset(Fedding.normal)
             $0.top.equalTo(parkImageView.snp.top)
             $0.leading.equalTo(parkImageView.snp.trailing).offset(Fedding.normal)
         }
