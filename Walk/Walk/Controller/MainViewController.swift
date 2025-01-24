@@ -114,7 +114,7 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
     
     private func sheetSetting() {
         if let sheet = sheetVC.sheetPresentationController {
-            sheet.detents = [.medium()]
+            sheet.detents = [.medium(), .large()]
             //시트 상단바 표시 옵션
             sheet.prefersGrabberVisible = true
         }

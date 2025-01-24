@@ -114,6 +114,7 @@ class SheetView: UIView {
     
     //MARK: 공원 관련 정보 탭 (시설, 행사)
     
+    //섹션 레이블
     private let sectionLabel: UILabel = {
         let label = UILabel()
         label.text = "주요시설과 행사정보"
@@ -124,7 +125,7 @@ class SheetView: UIView {
     
     private lazy var subView: UIView = {
         let view = UIView()
-        view.backgroundColor = .red
+        view.backgroundColor = .white
         view.clipsToBounds = true
         view.layer.cornerRadius = CornerRadius.normal
         view.addSubview(facilitiesLabel)
@@ -135,7 +136,13 @@ class SheetView: UIView {
     //공원 시설 정보 표시 레이블
     private let facilitiesLabel: UILabel = {
         let label = UILabel()
+        
         label.text = "시설 관련 정보"
+        // 하단 선 추가
+        let bottomLine = UIView()
+        bottomLine.backgroundColor = UIColor.gray // 회색 테두리 색상
+        bottomLine.frame = CGRect(x: 0, y: label.frame.height - 1, width: label.frame.width, height: 1)
+        label.addSubview(bottomLine)
         
         return label
     }()
@@ -159,28 +166,22 @@ class SheetView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = Color.sheetColor
-        outsideViewConfigureUI()
+        TopLabelConfigureUI()
         MainViewConfigureUI()
         toiletConfigureUI()
-        subViewConfigureUI()
+        bottomViewConfigureUI()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    private func outsideViewConfigureUI() {
-        [leftTimeLabel,sectionLabel].forEach {self.addSubview($0)}
+    private func TopLabelConfigureUI() {
+        self.addSubview(leftTimeLabel)
         
         leftTimeLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().offset(Fedding.normal)
         }
-        
-        sectionLabel.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.equalTo(20)
-        }
-
     }
     private func MainViewConfigureUI() {
         self.addSubview(mainView)
@@ -246,13 +247,34 @@ class SheetView: UIView {
         
     }
     
-    private func subViewConfigureUI() {
-        self.addSubview(subView)
+    private func bottomViewConfigureUI() {
+        [subView, sectionLabel].forEach {self.addSubview($0)}
         
         subView.snp.makeConstraints {
             $0.centerX.equalTo(mainView.snp.centerX)
-            $0.top.equalTo(sectionLabel.snp.bottom).offset(30)
+            $0.top.equalTo(sectionLabel.snp.bottom).offset(Fedding.normal)
+            $0.height.equalTo(346)
+            $0.width.equalTo(368)
         }
+        
+        sectionLabel.snp.makeConstraints {
+            $0.top.equalTo(tolietViewButton.snp.bottom).offset(Fedding.normal)
+            $0.leading.equalTo(20)
+        }
+        facilitiesLabel.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+            $0.top.equalToSuperview()
+            $0.bottom.equalTo(eventLabel.snp.top)
+        }
+        
+        eventLabel.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(116)
+            $0.bottom.equalToSuperview()
+        }
+        
+        
+        
     }
     
     
