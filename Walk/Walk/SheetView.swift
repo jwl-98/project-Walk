@@ -48,6 +48,7 @@ class SheetView: UIView {
         label.layer.cornerRadius  = CornerRadius.normal
         label.clipsToBounds = true
         label.textAlignment = .center
+        label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
         label.backgroundColor = Color.congestionLot
         

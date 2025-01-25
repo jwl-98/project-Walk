@@ -33,7 +33,8 @@ class SheetViewController: UIViewController {
     
     func getParkData(parkName: String) {
         sheetView.parkNameLable.text = parkName
-        parkCongestionDataManger.fetchData(placeName: parkName) {
+        let deleteWhiteSpaceOfParkName = parkName.filter { $0.isWhitespace == false }
+        parkCongestionDataManger.fetchData(placeName: deleteWhiteSpaceOfParkName) {
             parkData in
             guard let parkData = parkData else {
                 DispatchQueue.main.async {

@@ -13,6 +13,7 @@ struct ParkCongestionDataManager {
     
     func fetchData(placeName: String, completion: @escaping ([ParkCongestionDataModel]?) -> Void) {
         let urlString = "\(parkCongestionURL)\(placeName)"
+        print("띄어쓰기 사라진 공원 이름: \(placeName)")
         performRequest(with: urlString) { congestionData in
             completion(congestionData)
         }
