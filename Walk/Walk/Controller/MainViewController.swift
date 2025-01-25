@@ -9,43 +9,53 @@ import UIKit
 import GoogleMaps
 import GooglePlaces
 
-class MainViewController: UIViewController, GMSMapViewDelegate {
+class MainViewController: UIViewController, GMSMapViewDelegate{
     
     private var mapView: GMSMapView!
+    private var locationManager: CLLocationManager!
+    private var placesClient: GMSPlacesClient!
     private let sheetVC = SheetViewController()
-    private let placesClient = GMSPlacesClient.shared()
+    private var userLocation = (latitude: 0.0, longtitude: 0.0)
     let seoulLat =  37.5275
     let seoulLong = 127.028
     
     override func loadView() {
-        
+        print(#function)
+//        self.view = mapView
         //GMSMapView 인스턴스에서 발생하는 사용자 상호작용의 이벤트를 처리
         let camera = GMSCameraPosition.camera(withLatitude: seoulLat, longitude: seoulLong, zoom: 15.0)
         mapView = GMSMapView(frame: .zero, camera: camera)
-        self.view = mapView
+        mapView.settings.myLocationButton = true
         mapView.settings.scrollGestures = true
         mapView.settings.zoomGestures = true
         mapView.delegate = self
+        placesClient = GMSPlacesClient.shared()
+        
+        self.view = mapView
     }
     
     override func viewDidLoad() {
+        print(#function)
         super.viewDidLoad()
-        //mapView.settings.myLocationButton = true
-        let mapCenter = CLLocationCoordinate2DMake(mapView.camera.target.latitude, mapView.camera.target.longitude)
-        let marker = GMSMarker(position: mapCenter)
-        marker.map = mapView
-        placeSearch()
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization() // 위치 권한 요청
+        locationManager.startUpdatingLocation() //
+        mapView.isMyLocationEnabled = true
     }
     
-    func placeSearch() {
-        
+    func placeSearch(latitude: Double?, longitude: Double?) {
+        guard let userLat = latitude, let userLong = longitude else {
+            print("정보에러")
+            return }
+        print(#function)
         let myProperties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.placeID].map {$0.rawValue}
         let request = GMSPlaceSearchByTextRequest(textQuery:"park in seoul", placeProperties:myProperties)
         request.includedType = "park"
         request.maxResultCount = 20
         request.rankPreference = .distance
         request.isStrictTypeFiltering = true
-        request.locationBias =  GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(seoulLat, seoulLong), 3000.0)
+        request.locationBias =  GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(userLat, userLong), 3000.0)
         
         // Array to hold the places in the response
         var placeResults: [GMSPlace] = []
@@ -63,6 +73,7 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
             }
             //검색이 끝난 시점
             placeResults = results
+            print("검색결과 : \(placeResults)")
             
             //공원 위치 표시 마커
             for result in placeResults {
@@ -111,6 +122,9 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
             }
         })
     }
+    private func checkUserLocation() {
+        print("이건 머냐 \(locationManager.requestLocation())")
+    }
     
     private func sheetSetting() {
         if let sheet = sheetVC.sheetPresentationController {
@@ -124,7 +138,7 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
         print("핀이 눌렸음")
         //핀이 눌렸을 경우 sheet 표시
-        let origin = CLLocationCoordinate2D(latitude: seoulLat, longitude: seoulLong)
+        let origin = CLLocationCoordinate2D(latitude: userLocation.latitude, longitude: userLocation.longtitude)
         let destination = CLLocationCoordinate2D(latitude: marker.position.latitude, longitude: marker.position.longitude)
         
         if let title = marker.title {
@@ -147,7 +161,51 @@ class MainViewController: UIViewController, GMSMapViewDelegate {
         
         return true
     }
+}
+
+extension MainViewController:  CLLocationManagerDelegate {
     
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
+        print(#function)
+    }
+    //인증 상태 확인 메서드
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+            //위치 정보가 활성화 된경우
+        case .authorizedWhenInUse:
+            enableLocationFeatures()
+            break
+            
+            //위치 정보가 비활성화를 선택한 경우
+        case .restricted, .denied:
+            disableLocationFeatures()
+            break
+            
+            //위치 인증이 결정되지 않은 경우
+        case .notDetermined:
+            manager.requestWhenInUseAuthorization()
+            break
+        default:
+            break
+        }
+    }
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        print(#function)
+        print("유저 현재 위치가져오기 성공")
+        locations.forEach {
+            userLocation.latitude = $0.coordinate.latitude
+            userLocation.longtitude = $0.coordinate.longitude
+        }
+        placeSearch(latitude: userLocation.latitude, longitude: userLocation.longtitude)
+    }
+    
+    func enableLocationFeatures() {
+        print("위치 정보 활성화, 앱 실행")
+    }
+    
+    func disableLocationFeatures() {
+        print("위치 정보 비활성화, 앱 종료")
+    }
 }
 
 //@available(iOS 17.0, *)

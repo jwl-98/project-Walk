@@ -62,6 +62,8 @@ class SheetViewController: UIViewController {
         sheetView.parkImageView.image = parkImage
     }
     
+    //거리 계산후 예정시간 표시 해주는 함수
+    // 시간 반올림 필요, 60분 넘을시 0시간 0분 으로 나타내게 하는 작업필요
     func calculateRoute(origin: CLLocationCoordinate2D, destination: CLLocationCoordinate2D) {
         let request = MKDirections.Request()
         request.source = MKMapItem(placemark: MKPlacemark(coordinate: origin))
@@ -76,9 +78,9 @@ class SheetViewController: UIViewController {
                 return
             }
             if let route = response?.routes.first {
-                let expectationTime = Int(route.expectedTravelTime / 60)
+                let expectationTime = Int(round((route.expectedTravelTime) / 60))
                 self.sheetView.leftTimeLabel.text = "내 위치에서 \(expectationTime)분 소요될 예정이에요!"
-                print("예상 시간: \(route.expectedTravelTime / 60) 분") // 예상 시간 (분)
+                print("예상 시간: \(round((route.expectedTravelTime) / 60)) 분") // 예상 시간 (분)
             }
         }
         
