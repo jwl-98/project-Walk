@@ -79,8 +79,16 @@ class SheetViewController: UIViewController {
             }
             if let route = response?.routes.first {
                 let expectationTime = Int(round((route.expectedTravelTime) / 60))
-                self.sheetView.leftTimeLabel.text = "내 위치에서 \(expectationTime)분 소요될 예정이에요!"
-                print("예상 시간: \(round((route.expectedTravelTime) / 60)) 분") // 예상 시간 (분)
+                
+                switch expectationTime {
+                case 0...59:
+                    self.sheetView.leftTimeLabel.text = "내 위치에서 \(expectationTime)분 소요될 예정이에요!"
+                case 60:
+                    self.sheetView.leftTimeLabel.text = "내 위치에서 \(expectationTime / 60)시간 소요될 예정이에요!"
+                default:
+                    self.sheetView.leftTimeLabel.text = "내 위치에서 \(expectationTime / 60)시간 \(expectationTime % 60)분 소요될 예정이에요!"
+                }
+                print("예상 시간: \(expectationTime) 분") // 예상 시간 (분)
             }
         }
         

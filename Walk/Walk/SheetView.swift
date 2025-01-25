@@ -27,6 +27,7 @@ class SheetView: UIView {
     let leftTimeLabel: UILabel = {
         let label = UILabel()
         label.text = "내 위치에서 N분 소요될 예정이에요!"
+        label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
         
         return label
