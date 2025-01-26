@@ -44,13 +44,12 @@ class SheetView: UIView {
     //혼잡도 레이블
     let congestionLable: UILabel = {
         var label = UILabel()
-        label.text = "혼잡"
+        label.text = "혼잡도 정보가 없어요😢"
         label.layer.cornerRadius  = CornerRadius.normal
         label.clipsToBounds = true
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
-        label.backgroundColor = Color.congestionLot
         
         return label
     }()

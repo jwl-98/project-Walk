@@ -80,7 +80,7 @@ class MainViewController: UIViewController, GMSMapViewDelegate{
                 //검색 결과에 따른 핀 생성
                 let marker = GMSMarker(position: result.coordinate)
                 marker.appearAnimation = .pop
-                marker.icon = GMSMarker.markerImage(with: .blue)
+                marker.icon = GMSMarker.markerImage(with: .gray)
                 marker.title = result.name!
                 marker.map = self.mapView
                 marker.userData = result.placeID
