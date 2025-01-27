@@ -1,13 +1,19 @@
 //
-//  ModalViewController.swift
+//  ToiletViewController.swift
 //  Walk
 //
-//  Created by 진욱의 Macintosh on 1/22/25.
+//  Created by 진욱의 Macintosh on 1/26/25.
 //
 
 import UIKit
 
-class ModalViewController: UIViewController {
+class ToiletViewController: UIViewController {
+    
+    let toiletView = ToiletView()
+    
+    override func loadView() {
+        view = toiletView
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
