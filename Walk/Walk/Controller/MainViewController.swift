@@ -80,6 +80,31 @@ class MainViewController: UIViewController, GMSMapViewDelegate{
                 //검색 결과에 따른 핀 생성
                 let marker = GMSMarker(position: result.coordinate)
                 marker.appearAnimation = .pop
+                
+                let deleteWhiteSpaceOfParkName = result.name!.filter { $0.isWhitespace == false }
+                ParkCongestionDataManager.shared.fetchData(placeName: deleteWhiteSpaceOfParkName) { parkData in
+                    guard let parkData = parkData?.first else {
+                        DispatchQueue.main.async {
+                            marker.icon = GMSMarker.markerImage(with: .gray)
+                        }
+                        return
+                    }
+
+                    DispatchQueue.main.async {
+                        switch parkData.placeCongestLV {
+                        case "여유":
+                            marker.icon = GMSMarker.markerImage(with: Color.congestionRelex)
+                        case "보통":
+                            marker.icon = GMSMarker.markerImage(with: Color.congestionNormal)
+                        case "약간 붐빔":
+                            marker.icon = GMSMarker.markerImage(with: Color.congestionMiddle)
+                        case "혼잡":
+                            marker.icon = GMSMarker.markerImage(with: Color.congestionLot)
+                        default:
+                            marker.icon = GMSMarker.markerImage(with: .gray)
+                        }
+                    }
+                }
                 marker.icon = GMSMarker.markerImage(with: .gray)
                 marker.title = result.name!
                 marker.map = self.mapView

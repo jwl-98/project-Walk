@@ -7,19 +7,23 @@
 
 import Foundation
 
-// This file was generated from JSON Schema using quicktype, do not modify it directly.
-// To parse the JSON, add this file to your project and do:
-//
-//   let welcome = try? JSONDecoder().decode(Welcome.self, from: jsonData)
-
-import Foundation
-
 // MARK: - Welcome
 struct ParkCongestionData: Codable {
     let seoulRtdCitydataPpltn: [SeoulRtdCitydataPpltn]
+    let result: Result
 
     enum CodingKeys: String, CodingKey {
         case seoulRtdCitydataPpltn = "SeoulRtd.citydata_ppltn"
+        case result = "RESULT"
+    }
+}
+
+struct Result: Codable {
+    let resultCode, resultMessage: String
+
+    enum CodingKeys: String, CodingKey {
+        case resultCode = "RESULT.CODE"
+        case resultMessage = "RESULT.MESSAGE"
     }
 }
 

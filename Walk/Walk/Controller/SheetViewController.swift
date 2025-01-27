@@ -13,7 +13,7 @@ class SheetViewController: UIViewController {
     let sheetView = SheetView()
     let toiletView = ToiletView()
     let navigation = UINavigationController(rootViewController: ToiletViewController())
-    let parkCongestionDataManger = ParkCongestionDataManager()
+    //let parkCongestionDataManger = ParkCongestionDataManager()
     
     override func loadView() {
         view = sheetView
@@ -37,7 +37,7 @@ class SheetViewController: UIViewController {
     func getParkData(parkName: String) {
         sheetView.parkNameLable.text = parkName
         let deleteWhiteSpaceOfParkName = parkName.filter { $0.isWhitespace == false }
-        parkCongestionDataManger.fetchData(placeName: deleteWhiteSpaceOfParkName) {
+        ParkCongestionDataManager.shared.fetchData(placeName: deleteWhiteSpaceOfParkName) {
             parkData in
             guard let parkData = parkData else {
                 DispatchQueue.main.async {
@@ -49,35 +49,31 @@ class SheetViewController: UIViewController {
             
             
             parkData.forEach {
-                self.congestionLableText = $0.palceCongestLV ?? "에러"
+                self.congestionLableText = $0.placeCongestLV ?? "에러"
             }
             
             //붐빔,약간 붐빔, 보통, 여유
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else {return}
                 
-                print("혼잡도도도ㅗㅗㅗ: \(congestionLableText) ")
+                print("혼잡도도도ㅗㅗㅗ: \(congestionLableText!) ")
                 
                 switch congestionLableText {
                 case "여유":
-                    sheetView.congestionLable.backgroundColor = .green
+                    sheetView.congestionLable.backgroundColor = Color.congestionRelex
                     sheetView.congestionLable.text = self.congestionLableText
-                    print(congestionLableText)
                     return
                 case "보통":
-                    sheetView.congestionLable.backgroundColor = .orange
+                    sheetView.congestionLable.backgroundColor = Color.congestionNormal
                     sheetView.congestionLable.text = self.congestionLableText
-                    print(congestionLableText)
                     return
                 case "약간 붐빔":
-                    sheetView.congestionLable.backgroundColor = .systemPink
+                    sheetView.congestionLable.backgroundColor = Color.congestionMiddle
                     sheetView.congestionLable.text = self.congestionLableText
-                    print(congestionLableText)
                     return
                 case "붐빔":
-                    sheetView.congestionLable.backgroundColor = .red
+                    sheetView.congestionLable.backgroundColor = Color.congestionLot
                     sheetView.congestionLable.text = self.congestionLableText
-                    print(congestionLableText)
                     return
                 default:
                     break

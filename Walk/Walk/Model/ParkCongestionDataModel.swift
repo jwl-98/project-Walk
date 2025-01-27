@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct ParkCongestionDataModel {
+struct ParkCongestionDataModel: Codable {
     let placeName: String?
-    let palceCongestLV: String?
+    let placeCongestLV: String?
     
-    init(placeName: String?, palceCongestLV: String?) {
+    init(placeName: String?, placeCongestLV: String?) {
         self.placeName = placeName
-        self.palceCongestLV = palceCongestLV
+        self.placeCongestLV = placeCongestLV
     }
 }
