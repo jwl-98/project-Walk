@@ -12,8 +12,6 @@ class SheetViewController: UIViewController {
     var congestionLableText: String!
     let sheetView = SheetView()
     let toiletView = ToiletView()
-    let navigation = UINavigationController(rootViewController: ToiletViewController())
-    //let parkCongestionDataManger = ParkCongestionDataManager()
     
     override func loadView() {
         view = sheetView
@@ -30,7 +28,10 @@ class SheetViewController: UIViewController {
     
     @objc
     func toiletButtonTapped(){
-//        navigationController.po
+        let toiletVC = ToiletViewController()
+        let navController = UINavigationController(rootViewController: toiletVC)
+        navController.modalPresentationStyle = .fullScreen
+        present(navController, animated: true)
         print("화장실 버튼 눌림")
     }
     
@@ -78,10 +79,6 @@ class SheetViewController: UIViewController {
                 default:
                     break
                 }
-//                if congestionLableText == "여유" {
-//                    sheetView.congestionLable.backgroundColor = .green
-//                    sheetView.congestionLable.text = self.congestionLableText
-//                }
             }
         }
     }

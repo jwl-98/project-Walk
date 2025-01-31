@@ -24,6 +24,7 @@ class MainViewController: UIViewController, GMSMapViewDelegate{
 //        self.view = mapView
         //GMSMapView 인스턴스에서 발생하는 사용자 상호작용의 이벤트를 처리
         let camera = GMSCameraPosition.camera(withLatitude: seoulLat, longitude: seoulLong, zoom: 15.0)
+        
         mapView = GMSMapView(frame: .zero, camera: camera)
         mapView.settings.myLocationButton = true
         mapView.settings.scrollGestures = true
