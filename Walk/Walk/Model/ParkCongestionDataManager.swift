@@ -10,7 +10,7 @@ import Foundation
 struct ParkCongestionDataManager {
     static let shared = ParkCongestionDataManager()
     
-    let parkCongestionURL = "http://openapi.seoul.go.kr:8088//json/citydata_ppltn/1/5/"
+    let parkCongestionURL = "http://openapi.seoul.go.kr:8088/5a464b67516a303936326f676f6c50/json/citydata_ppltn/1/5/"
     
     func fetchData(placeName: String, completion: @escaping ([ParkCongestionDataModel]?) -> Void) {
         let urlString = "\(parkCongestionURL)\(placeName)"
@@ -57,7 +57,7 @@ struct ParkCongestionDataManager {
             
             //데이터 리스트 데이터 모델에 매핑
             let dataListToArray = dataList.map {
-                ParkCongestionDataModel(placeName: $0.areaNm, placeCongestLV: $0.areaCongestLvl)
+                ParkCongestionDataModel(placeName: $0.areaNm, palceCongestLV: $0.areaCongestLvl)
             }
             print("파싱성공")
             return dataListToArray

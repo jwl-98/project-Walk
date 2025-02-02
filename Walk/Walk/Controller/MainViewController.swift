@@ -9,19 +9,27 @@ import UIKit
 import GoogleMaps
 import GooglePlaces
 
-class MainViewController: UIViewController, GMSMapViewDelegate{
+//데이터 전달을 받기위한 델리게이트 선언
+//?? - AnyObject는 무엇을 의미하는거지?
+
+class MainViewController: UIViewController{
     
     private var mapView: GMSMapView!
     private var locationManager: CLLocationManager!
     private var placesClient: GMSPlacesClient!
     private let sheetVC = SheetViewController()
-    private var userLocation = (latitude: 0.0, longtitude: 0.0)
+    private var userLocation = CLLocationCoordinate2D(latitude:  0.0, longitude: 0.0)
+    private var parkData: ParkLocation?
+    private let seoulBounds = GMSCoordinateBounds(
+        coordinate: CLLocationCoordinate2D(latitude: 37.7019, longitude: 126.7341), // 북서쪽
+        coordinate: CLLocationCoordinate2D(latitude: 37.4283, longitude: 127.1836)  // 남동쪽
+    )
+    
     let seoulLat =  37.5275
     let seoulLong = 127.028
     
     override func loadView() {
         print(#function)
-//        self.view = mapView
         //GMSMapView 인스턴스에서 발생하는 사용자 상호작용의 이벤트를 처리
         let camera = GMSCameraPosition.camera(withLatitude: seoulLat, longitude: seoulLong, zoom: 15.0)
         
@@ -31,7 +39,7 @@ class MainViewController: UIViewController, GMSMapViewDelegate{
         mapView.settings.zoomGestures = true
         mapView.delegate = self
         placesClient = GMSPlacesClient.shared()
-        
+        //검색 진행후 view 초기화
         self.view = mapView
     }
     
@@ -45,10 +53,7 @@ class MainViewController: UIViewController, GMSMapViewDelegate{
         mapView.isMyLocationEnabled = true
     }
     
-    func placeSearch(latitude: Double?, longitude: Double?) {
-        guard let userLat = latitude, let userLong = longitude else {
-            print("정보에러")
-            return }
+    func placeSearch(userLocation: CLLocationCoordinate2D) {
         print(#function)
         let myProperties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.placeID].map {$0.rawValue}
         let request = GMSPlaceSearchByTextRequest(textQuery:"park in seoul", placeProperties:myProperties)
@@ -56,7 +61,7 @@ class MainViewController: UIViewController, GMSMapViewDelegate{
         request.maxResultCount = 20
         request.rankPreference = .distance
         request.isStrictTypeFiltering = true
-        request.locationBias =  GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(userLat, userLong), 3000.0)
+        request.locationBias =  GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(userLocation.latitude, userLocation.longitude), 3000.0)
         
         // Array to hold the places in the response
         var placeResults: [GMSPlace] = []
@@ -148,10 +153,6 @@ class MainViewController: UIViewController, GMSMapViewDelegate{
             }
         })
     }
-    private func checkUserLocation() {
-        print("이건 머냐 \(locationManager.requestLocation())")
-    }
-    
     private func sheetSetting() {
         if let sheet = sheetVC.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
@@ -160,36 +161,57 @@ class MainViewController: UIViewController, GMSMapViewDelegate{
         }
         present(sheetVC, animated: true)
     }
-    
+   
+}
+extension MainViewController: GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+        
         print("핀이 눌렸음")
+        
         //핀이 눌렸을 경우 sheet 표시
-        let origin = CLLocationCoordinate2D(latitude: userLocation.latitude, longitude: userLocation.longtitude)
+        let origin = CLLocationCoordinate2D(latitude: userLocation.latitude, longitude: userLocation.longitude)
         let destination = CLLocationCoordinate2D(latitude: marker.position.latitude, longitude: marker.position.longitude)
         
+        //확인필요 - 프로토콜을 통한 데이터 전달 간
         if let title = marker.title {
             sheetVC.getParkData(parkName: title)
             //기본 이미지 셋팅 (로딩 이미지)
             sheetVC.getParkImage(parkImage: UIImage(systemName: "tree.fill")!)
             print("marker title: \(title)")
         }
-        sheetVC.calculateRoute(origin: origin, destination: destination)
+        //데이터 제공
+        sheetVC.parkDataSource = self
         
+        let parkLocation = ParkLocation(parkName: marker.title ?? "", parkLocation: marker.position)
+        parkData = parkLocation
+        
+        //확인필요
+        sheetVC.calculateRoute(origin: origin, destination: destination)
         sheetSetting()
         
+        //확인필요
         if let placeID = marker.userData as? String {
             fetchPlaceImage(placeID: placeID) { [weak self] parkImage in
                 guard let self = self else {return}
                 self.sheetVC.getParkImage(parkImage: parkImage)
             }
         }
-        
-        
         return true
     }
+    
+    //사용자가 서울시에서 벗어난 경우
+    func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
+        if !seoulBounds.contains(position.target) {
+            let update = GMSCameraUpdate.setTarget(userLocation, zoom: 17.0)
+            mapView.animate(with: update)
+        } else {
+            print("서울에서 벗어남")
+        }
+    }
+    
 }
 
-extension MainViewController:  CLLocationManagerDelegate {
+extension MainViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
         print(#function)
@@ -220,9 +242,9 @@ extension MainViewController:  CLLocationManagerDelegate {
         print("유저 현재 위치가져오기 성공")
         locations.forEach {
             userLocation.latitude = $0.coordinate.latitude
-            userLocation.longtitude = $0.coordinate.longitude
+            userLocation.longitude = $0.coordinate.longitude
         }
-        placeSearch(latitude: userLocation.latitude, longitude: userLocation.longtitude)
+        placeSearch(userLocation: userLocation)
     }
     
     func enableLocationFeatures() {
@@ -232,6 +254,18 @@ extension MainViewController:  CLLocationManagerDelegate {
     func disableLocationFeatures() {
         print("위치 정보 비활성화, 앱 종료")
     }
+}
+
+//데이터 전달을 위한 프로토콜 채택
+extension MainViewController: ParkLocationDataSource {
+    
+    func parkDataSource() -> ParkLocation {
+        print(#function)
+        dump(parkData)
+        return parkData!
+    }
+
+    
 }
 
 //@available(iOS 17.0, *)

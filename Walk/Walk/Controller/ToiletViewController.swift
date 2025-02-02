@@ -16,7 +16,17 @@ class ToiletViewController: UIViewController, GMSMapViewDelegate {
     private var mapView: GMSMapView!
     let seoulLat =  37.5275
     let seoulLong = 127.028
-
+    let parkLocation: ParkLocation?
+    
+    init(parkLocation: ParkLocation) {
+        self.parkLocation = parkLocation
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupMapView()
@@ -25,7 +35,9 @@ class ToiletViewController: UIViewController, GMSMapViewDelegate {
     }
     
     private func setupMapView() {
-        let camera = GMSCameraPosition.camera(withLatitude: seoulLat, longitude: seoulLong, zoom: 17.0)
+        
+        guard let parkLocation = parkLocation else {return}
+        let camera = GMSCameraPosition.camera(withLatitude: parkLocation.parkLocation.latitude, longitude: parkLocation.parkLocation.longitude , zoom: 17.0)
         mapView = GMSMapView(frame: .zero, camera: camera)
         mapView.settings.scrollGestures = true
         mapView.settings.zoomGestures = true
@@ -34,9 +46,12 @@ class ToiletViewController: UIViewController, GMSMapViewDelegate {
         
     //네비게이션 바 설정
     private func setupNavBar() {
+        guard let parkLocation = parkLocation else { return }
+        print(#function)
         let navigationBarAppearance = UINavigationBarAppearance()
         navigationController?.navigationBar.standardAppearance = navigationBarAppearance
-        navigationItem.title = "공원이름"
+        navigationItem.title = "\(parkLocation.parkName)"
+        print("TVC 확인 \(parkLocation.parkName)")
         navigationController?.navigationBar.tintColor = .black  // 버튼 색상
         navigationController?.navigationBar.backgroundColor = .white  // 배경색
         
