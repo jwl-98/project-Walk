@@ -24,14 +24,11 @@ class MainViewController: UIViewController{
         coordinate: CLLocationCoordinate2D(latitude: 37.7019, longitude: 126.7341), // 북서쪽
         coordinate: CLLocationCoordinate2D(latitude: 37.4283, longitude: 127.1836)  // 남동쪽
     )
-    
-    let seoulLat =  37.5275
-    let seoulLong = 127.028
-    
+
     override func loadView() {
         print(#function)
         //GMSMapView 인스턴스에서 발생하는 사용자 상호작용의 이벤트를 처리
-        let camera = GMSCameraPosition.camera(withLatitude: seoulLat, longitude: seoulLong, zoom: 15.0)
+        let camera = GMSCameraPosition.camera(withLatitude: userLocation.latitude, longitude: userLocation.longitude, zoom: 15.0)
         
         mapView = GMSMapView(frame: .zero, camera: camera)
         mapView.settings.myLocationButton = true
@@ -39,6 +36,7 @@ class MainViewController: UIViewController{
         mapView.settings.zoomGestures = true
         mapView.delegate = self
         placesClient = GMSPlacesClient.shared()
+        
         //검색 진행후 view 초기화
         self.view = mapView
     }
@@ -95,7 +93,7 @@ class MainViewController: UIViewController{
                         }
                         return
                     }
-
+                    
                     DispatchQueue.main.async {
                         switch parkData.placeCongestLV {
                         case "여유":
@@ -161,7 +159,7 @@ class MainViewController: UIViewController{
         }
         present(sheetVC, animated: true)
     }
-   
+    
 }
 extension MainViewController: GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
@@ -202,11 +200,11 @@ extension MainViewController: GMSMapViewDelegate {
     //사용자가 서울시에서 벗어난 경우
     func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
         if !seoulBounds.contains(position.target) {
-            let update = GMSCameraUpdate.setTarget(userLocation, zoom: 17.0)
+            let update = GMSCameraUpdate.setTarget(userLocation, zoom: 15.0)
             mapView.animate(with: update)
-        } else {
             print("서울에서 벗어남")
         }
+        print("서울 내부임")
     }
     
 }
@@ -240,6 +238,8 @@ extension MainViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         print(#function)
         print("유저 현재 위치가져오기 성공")
+        let update = GMSCameraUpdate.setTarget(userLocation, zoom: 15.0)
+        mapView.animate(with: update)
         locations.forEach {
             userLocation.latitude = $0.coordinate.latitude
             userLocation.longitude = $0.coordinate.longitude
@@ -264,7 +264,7 @@ extension MainViewController: ParkLocationDataSource {
         dump(parkData)
         return parkData!
     }
-
+    
     
 }
 
