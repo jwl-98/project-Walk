@@ -12,6 +12,7 @@ public enum Color {
     //시트컬러
     static let sheetColor = UIColor(hexCode: "F7F7F6")
     static let toiletBackGround = UIColor(hexCode: "007AFF")
+    static let congestionNone = UIColor(hexCode: "#d3d3d3")
     static let congestionRelex = UIColor(hexCode: "91C6FF") //여유
     static let congestionNormal = UIColor(hexCode: "7BE7AA") //보통
     static let congestionMiddle = UIColor(hexCode: "FFAF88") //약간붐빔

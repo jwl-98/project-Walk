@@ -56,7 +56,7 @@ class MainViewController: UIViewController{
         let myProperties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.placeID].map {$0.rawValue}
         let request = GMSPlaceSearchByTextRequest(textQuery:"park in seoul", placeProperties:myProperties)
         request.includedType = "park"
-        request.maxResultCount = 20
+        request.maxResultCount = 50
         request.rankPreference = .distance
         request.isStrictTypeFiltering = true
         request.locationBias =  GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(userLocation.latitude, userLocation.longitude), 1500.0)
@@ -89,7 +89,7 @@ class MainViewController: UIViewController{
                 SeoulDataManager.shared.fetchParkCongestionData(placeName: deleteWhiteSpaceOfParkName) { parkData in
                     guard let parkData = parkData?.first else {
                         DispatchQueue.main.async {
-                            marker.icon = GMSMarker.markerImage(with: .gray)
+                            marker.icon = GMSMarker.markerImage(with: Color.congestionNone)
                         }
                         return
                     }
@@ -105,11 +105,11 @@ class MainViewController: UIViewController{
                         case "혼잡":
                             marker.icon = GMSMarker.markerImage(with: Color.congestionLot)
                         default:
-                            marker.icon = GMSMarker.markerImage(with: .gray)
+                            marker.icon = GMSMarker.markerImage(with:  Color.congestionNone)
                         }
                     }
                 }
-                marker.icon = GMSMarker.markerImage(with: .gray)
+                marker.icon = GMSMarker.markerImage(with: Color.congestionNone)
                 marker.title = result.name!
                 marker.map = self.mapView
                 marker.userData = result.placeID
