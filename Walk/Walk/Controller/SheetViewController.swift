@@ -8,12 +8,16 @@
 import UIKit
 import MapKit
 
+protocol ParkLocationDataSource: AnyObject {
+    func parkDataSource() -> ParkLocation
+}
+
 class SheetViewController: UIViewController {
+   
     var congestionLableText: String!
+    weak var parkDataSource: ParkLocationDataSource?
     let sheetView = SheetView()
     let toiletView = ToiletView()
-    let navigation = UINavigationController(rootViewController: ToiletViewController())
-    //let parkCongestionDataManger = ParkCongestionDataManager()
     
     override func loadView() {
         view = sheetView
@@ -30,14 +34,22 @@ class SheetViewController: UIViewController {
     
     @objc
     func toiletButtonTapped(){
-//        navigationController.po
+        print(#function)
+        guard let parkLocation = parkDataSource?.parkDataSource() else {
+            print("전달된 데이터 없음.")
+            return }
+        //toiletVC 생성과 동시에 Park데이터 전달
+        let toiletVC = ToiletViewController(parkLocation: parkLocation)
+        let navController = UINavigationController(rootViewController: toiletVC)
+        navController.modalPresentationStyle = .fullScreen
+        present(navController, animated: true)
         print("화장실 버튼 눌림")
     }
     
     func getParkData(parkName: String) {
         sheetView.parkNameLable.text = parkName
         let deleteWhiteSpaceOfParkName = parkName.filter { $0.isWhitespace == false }
-        ParkCongestionDataManager.shared.fetchData(placeName: deleteWhiteSpaceOfParkName) {
+        SeoulDataManager.shared.fetchParkCongestionData(placeName: deleteWhiteSpaceOfParkName) {
             parkData in
             guard let parkData = parkData else {
                 DispatchQueue.main.async {
@@ -78,10 +90,6 @@ class SheetViewController: UIViewController {
                 default:
                     break
                 }
-//                if congestionLableText == "여유" {
-//                    sheetView.congestionLable.backgroundColor = .green
-//                    sheetView.congestionLable.text = self.congestionLableText
-//                }
             }
         }
     }
@@ -92,7 +100,7 @@ class SheetViewController: UIViewController {
     }
     
     //거리 계산후 예정시간 표시 해주는 함수
-    // 시간 반올림 필요, 60분 넘을시 0시간 0분 으로 나타내게 하는 작업필요
+    // 시간 반올림 필요, 60분 넘을시 0시간 0분 으로 나타내게 하는 작업필요 - 완
     func calculateRoute(origin: CLLocationCoordinate2D, destination: CLLocationCoordinate2D) {
         let request = MKDirections.Request()
         request.source = MKMapItem(placemark: MKPlacemark(coordinate: origin))

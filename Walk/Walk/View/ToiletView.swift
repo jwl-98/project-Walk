@@ -8,9 +8,12 @@
 import UIKit
 
 class ToiletView: UIView {
+    
+    
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
         
         backgroundColor = .blue
     }
@@ -19,3 +22,9 @@ class ToiletView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+//@available(iOS 17.0, *)
+//#Preview {
+//    TestViewController()
+//}
+

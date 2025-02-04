@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		362AD3A49ED4A6289207A367 /* Pods_Walk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 079897EDD98A021027ED60AC /* Pods_Walk.framework */; };
 		E289CE222D3B7F2D00134D78 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = E289CE212D3B7F2D00134D78 /* SnapKit */; };
+		E29D20522D51E725007E21FA /* 서울시공중화장실정보.json in Resources */ = {isa = PBXBuildFile; fileRef = E29D20512D51E725007E21FA /* 서울시공중화장실정보.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -16,6 +17,7 @@
 		079897EDD98A021027ED60AC /* Pods_Walk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Walk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		16DFA78AE1A461808D29BE2F /* Pods-Walk.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Walk.debug.xcconfig"; path = "Target Support Files/Pods-Walk/Pods-Walk.debug.xcconfig"; sourceTree = "<group>"; };
 		E289CE082D3B7F0900134D78 /* Walk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Walk.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E29D20512D51E725007E21FA /* 서울시공중화장실정보.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "서울시공중화장실정보.json"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -64,6 +66,7 @@
 		E289CDFF2D3B7F0900134D78 = {
 			isa = PBXGroup;
 			children = (
+				E29D20512D51E725007E21FA /* 서울시공중화장실정보.json */,
 				E289CE0A2D3B7F0900134D78 /* Walk */,
 				E289CE092D3B7F0900134D78 /* Products */,
 				80242EF9A003196904734BC1 /* Pods */,
@@ -157,6 +160,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E29D20522D51E725007E21FA /* 서울시공중화장실정보.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,6 +230,7 @@
 				DEVELOPMENT_TEAM = KNX528WB6D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Walk/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "산책가자";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -258,6 +263,7 @@
 				DEVELOPMENT_TEAM = KNX528WB6D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Walk/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "산책가자";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;

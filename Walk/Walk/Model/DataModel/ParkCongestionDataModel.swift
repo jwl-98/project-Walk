@@ -11,8 +11,8 @@ struct ParkCongestionDataModel: Codable {
     let placeName: String?
     let placeCongestLV: String?
     
-    init(placeName: String?, placeCongestLV: String?) {
+    init(placeName: String?, palceCongestLV: String?) {
         self.placeName = placeName
-        self.placeCongestLV = placeCongestLV
+        self.placeCongestLV = palceCongestLV
     }
 }
