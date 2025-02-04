@@ -49,7 +49,7 @@ class SheetViewController: UIViewController {
     func getParkData(parkName: String) {
         sheetView.parkNameLable.text = parkName
         let deleteWhiteSpaceOfParkName = parkName.filter { $0.isWhitespace == false }
-        ParkCongestionDataManager.shared.fetchData(placeName: deleteWhiteSpaceOfParkName) {
+        SeoulDataManager.shared.fetchParkCongestionData(placeName: deleteWhiteSpaceOfParkName) {
             parkData in
             guard let parkData = parkData else {
                 DispatchQueue.main.async {

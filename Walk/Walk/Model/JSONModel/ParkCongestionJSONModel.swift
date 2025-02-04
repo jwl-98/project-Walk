@@ -7,8 +7,8 @@
 
 import Foundation
 
-// MARK: - Welcome
-struct ParkCongestionData: Codable {
+
+struct ParkCongestionJSONModel: Codable {
     let seoulRtdCitydataPpltn: [SeoulRtdCitydataPpltn]
     let result: Result
 

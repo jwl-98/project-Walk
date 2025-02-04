@@ -13,10 +13,12 @@ import GooglePlaces
 class ToiletViewController: UIViewController, GMSMapViewDelegate {
     
     let toiletView = ToiletView()
+    private var placesClient: GMSPlacesClient!
     private var mapView: GMSMapView!
     let seoulLat =  37.5275
     let seoulLong = 127.028
     let parkLocation: ParkLocation?
+    var toiletArry: [SeoulToiletDataModel]?
     
     init(parkLocation: ParkLocation) {
         self.parkLocation = parkLocation
@@ -29,9 +31,11 @@ class ToiletViewController: UIViewController, GMSMapViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(#function)
         setupMapView()
         configureUI()
         setupNavBar()
+        setupToiletMarkers()
     }
     
     private func setupMapView() {
@@ -42,6 +46,12 @@ class ToiletViewController: UIViewController, GMSMapViewDelegate {
         mapView.settings.scrollGestures = true
         mapView.settings.zoomGestures = true
         mapView.delegate = self
+        placesClient = GMSPlacesClient.shared()
+      
+        let parkMarker = GMSMarker(position: parkLocation.parkLocation)
+               parkMarker.title = parkLocation.parkName
+               parkMarker.icon = GMSMarker.markerImage(with: .green)  // 공원 마커는 녹색으로
+               parkMarker.map = mapView
     }
         
     //네비게이션 바 설정
@@ -62,6 +72,29 @@ class ToiletViewController: UIViewController, GMSMapViewDelegate {
             target: self,
             action: #selector(dismissVC)
         )
+    }
+    
+    private func setupToiletMarkers() {
+        guard let parkLocation = parkLocation,
+              let toiletArray = SeoulDataManager().parseToiletLocalJSON() else {return}
+        
+        let parkCoordinate = parkLocation.parkLocation
+        
+        let nearByToilet = toiletArray.filter { toilet in
+            let toiletCoordinate = CLLocation(latitude: toilet.toiletLat, longitude: toilet.toiletLong)
+            let parkLocationObj = CLLocation(latitude: parkCoordinate.latitude, longitude: parkCoordinate.longitude)
+            
+            let distance = toiletCoordinate.distance(from: parkLocationObj)
+            return distance <= 2000
+        }
+        for toilet in nearByToilet {
+               let marker = GMSMarker()
+               marker.position = CLLocationCoordinate2D(latitude: toilet.toiletLat, longitude: toilet.toiletLong)
+               marker.title = toilet.toiletName
+               marker.snippet = "공중화장실"
+               marker.icon = GMSMarker.markerImage(with: .blue) // 화장실 마커는 파란색으로 표시
+               marker.map = mapView
+           }
     }
     
     @objc

@@ -51,7 +51,7 @@ class MainViewController: UIViewController{
         mapView.isMyLocationEnabled = true
     }
     
-    func placeSearch(userLocation: CLLocationCoordinate2D) {
+    func parkSearch(userLocation: CLLocationCoordinate2D) {
         print(#function)
         let myProperties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.placeID].map {$0.rawValue}
         let request = GMSPlaceSearchByTextRequest(textQuery:"park in seoul", placeProperties:myProperties)
@@ -59,7 +59,7 @@ class MainViewController: UIViewController{
         request.maxResultCount = 20
         request.rankPreference = .distance
         request.isStrictTypeFiltering = true
-        request.locationBias =  GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(userLocation.latitude, userLocation.longitude), 3000.0)
+        request.locationBias =  GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(userLocation.latitude, userLocation.longitude), 1500.0)
         
         // Array to hold the places in the response
         var placeResults: [GMSPlace] = []
@@ -86,7 +86,7 @@ class MainViewController: UIViewController{
                 marker.appearAnimation = .pop
                 
                 let deleteWhiteSpaceOfParkName = result.name!.filter { $0.isWhitespace == false }
-                ParkCongestionDataManager.shared.fetchData(placeName: deleteWhiteSpaceOfParkName) { parkData in
+                SeoulDataManager.shared.fetchParkCongestionData(placeName: deleteWhiteSpaceOfParkName) { parkData in
                     guard let parkData = parkData?.first else {
                         DispatchQueue.main.async {
                             marker.icon = GMSMarker.markerImage(with: .gray)
@@ -170,6 +170,7 @@ extension MainViewController: GMSMapViewDelegate {
         let origin = CLLocationCoordinate2D(latitude: userLocation.latitude, longitude: userLocation.longitude)
         let destination = CLLocationCoordinate2D(latitude: marker.position.latitude, longitude: marker.position.longitude)
         
+        print("공원 위 경도: \(destination)")
         //확인필요 - 프로토콜을 통한 데이터 전달 간
         if let title = marker.title {
             sheetVC.getParkData(parkName: title)
@@ -244,7 +245,7 @@ extension MainViewController: CLLocationManagerDelegate {
             userLocation.latitude = $0.coordinate.latitude
             userLocation.longitude = $0.coordinate.longitude
         }
-        placeSearch(userLocation: userLocation)
+        parkSearch(userLocation: userLocation)
     }
     
     func enableLocationFeatures() {
