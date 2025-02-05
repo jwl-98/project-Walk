@@ -115,6 +115,28 @@ class SheetView: UIView {
     
     //MARK: 공원 관련 정보 탭 (시설, 행사)
     
+    
+    private lazy var eventCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 10
+        
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+        collectionView.register(EventCell.self, forCellWithReuseIdentifier: "EventCell")
+        collectionView.showsVerticalScrollIndicator = false
+        return collectionView
+    }()
+    
+    private let noEventLabel: UILabel = {
+        let label = UILabel()
+        label.text = "예정 행사가 없는거 같아요"
+        label.font = .systemFont(ofSize: 24, weight: .bold)
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
+    }()
     //섹션 레이블
     private let sectionLabel: UILabel = {
         let label = UILabel()
@@ -131,6 +153,8 @@ class SheetView: UIView {
         view.layer.cornerRadius = CornerRadius.normal
         view.addSubview(facilitiesLabel)
         view.addSubview(eventLabel)
+        view.addSubview(eventCollectionView)
+        view.addSubview(noEventLabel)
         
         return view
     }()
@@ -139,6 +163,7 @@ class SheetView: UIView {
         let label = UILabel()
         
         label.text = "시설 관련 정보"
+        label.font = .systemFont(ofSize: 20, weight: .semibold)
         // 하단 선 추가
         let bottomLine = UIView()
         bottomLine.backgroundColor = UIColor.gray // 회색 테두리 색상
@@ -148,11 +173,16 @@ class SheetView: UIView {
         return label
     }()
     
+    private let lines: UIView = {
+        let line = UIView()
+
+        return line
+    }()
     //행사 정보 표시 레이블
     private let eventLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .semibold)
-        label.text = "행사 관련 정보"
+        label.font = .systemFont(ofSize: 20, weight: .semibold)
+        label.text = "공원 주변 행사"
         
         return label
     }()
@@ -251,6 +281,16 @@ class SheetView: UIView {
     private func bottomViewConfigureUI() {
         [subView, sectionLabel].forEach {self.addSubview($0)}
         
+        
+        eventCollectionView.snp.makeConstraints {
+            $0.top.equalTo(eventLabel.snp.bottom).offset(Fedding.normal)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview()
+        }
+        
+        noEventLabel.snp.makeConstraints {
+            $0.center.equalTo(eventCollectionView)
+        }
         subView.snp.makeConstraints {
             $0.centerX.equalTo(mainView.snp.centerX)
             $0.top.equalTo(sectionLabel.snp.bottom).offset(Fedding.normal)
@@ -260,31 +300,46 @@ class SheetView: UIView {
         
         sectionLabel.snp.makeConstraints {
             $0.top.equalTo(tolietViewButton.snp.bottom).offset(Fedding.normal)
-            $0.leading.equalTo(20)
+            $0.leading.equalTo(Fedding.normal)
         }
         facilitiesLabel.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
+//            $0.leading.trailing.equalToSuperview()
+//            $0.top.equalToSuperview()
+//            $0.bottom.equalTo(eventLabel.snp.top)
             $0.top.equalToSuperview()
-            $0.bottom.equalTo(eventLabel.snp.top)
+            $0.leading.trailing.equalToSuperview().inset(Fedding.normal)
+            $0.height.equalTo(100)
         }
         
         eventLabel.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(116)
-            $0.bottom.equalToSuperview()
+//            $0.leading.trailing.equalToSuperview()
+//            $0.height.equalTo(116)
+//            $0.bottom.equalToSuperview()
+            $0.centerY.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(Fedding.normal)
+            $0.height.equalTo(30)
         }
         
         
         
     }
-    
-    
 }
 
+// MARK: - Public Methods
+extension SheetView {
+    func updateEventList(isEmpty: Bool) {
+        eventCollectionView.reloadData()
+        noEventLabel.isHidden = !isEmpty
+    }
+    
+    func setupEventCollectionView(delegate: UICollectionViewDelegate, dataSource: UICollectionViewDataSource) {
+        eventCollectionView.delegate = delegate
+        eventCollectionView.dataSource = dataSource
+    }
+}
 
+@available(iOS 17.0, *)
+#Preview {
+    SheetViewController()
+}
 
-//@available(iOS 17.0, *)
-//#Preview {
-//    SheetViewController()
-//}
-//

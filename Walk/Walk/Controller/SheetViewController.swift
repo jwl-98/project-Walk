@@ -25,8 +25,22 @@ class SheetViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupAddTarget()
+        setupCollectionView()
+
+        
     }
     
+    private var events: [Row] = [] {
+        didSet {
+            DispatchQueue.main.async {
+                self.sheetView.updateEventList(isEmpty: self.events.isEmpty)
+            }
+        }
+    }
+    
+    private func setupCollectionView() {
+        sheetView.setupEventCollectionView(delegate: self, dataSource: self)
+     }
     //버튼 동작 연결
     private func setupAddTarget() {
         sheetView.tolietViewButton.addTarget(self, action: #selector(toiletButtonTapped), for: .touchUpInside)
@@ -46,9 +60,27 @@ class SheetViewController: UIViewController {
         print("화장실 버튼 눌림")
     }
     
-    func getParkData(parkName: String) {
+    func getParkData(parkName: String, location: CLLocationCoordinate2D) {
         sheetView.parkNameLable.text = parkName
         let deleteWhiteSpaceOfParkName = parkName.filter { $0.isWhitespace == false }
+        
+        print("위치 정보: \(location.latitude), \(location.longitude)")
+        // 해당 공원 근처의 이벤트 데이터 가져오기
+        SeoulDataManager.shared.fetchEventData(parkLocation: location, parkName: parkName) { [weak self] events in
+            guard let self = self else { return }
+            if let events = events {
+                self.events = events
+                print("이벤트 데이터 개수: \(events.count)")
+                
+                events.forEach { event in
+                    print("이벤트 제목: \(event.title)")
+                    print("이벤트 장소: \(event.place)")
+                    print("이벤트 날짜: \(event.strtdate) ~ \(event.endDate)")
+                    print("------------------------")
+                }
+            }
+        }
+
         SeoulDataManager.shared.fetchParkCongestionData(placeName: deleteWhiteSpaceOfParkName) {
             parkData in
             guard let parkData = parkData else {
@@ -57,9 +89,8 @@ class SheetViewController: UIViewController {
                     self.sheetView.congestionLable.backgroundColor = .white
                 }
                 print(self.congestionLableText)
-                return }
-            
-            
+                return
+            }
             parkData.forEach {
                 self.congestionLableText = $0.placeCongestLV ?? "에러"
             }
@@ -68,25 +99,21 @@ class SheetViewController: UIViewController {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else {return}
                 
-                print("혼잡도도도ㅗㅗㅗ: \(congestionLableText!) ")
+                print("혼잡도확인 : \(congestionLableText!) ")
                 
                 switch congestionLableText {
                 case "여유":
                     sheetView.congestionLable.backgroundColor = Color.congestionRelex
                     sheetView.congestionLable.text = self.congestionLableText
-                    return
                 case "보통":
                     sheetView.congestionLable.backgroundColor = Color.congestionNormal
                     sheetView.congestionLable.text = self.congestionLableText
-                    return
                 case "약간 붐빔":
                     sheetView.congestionLable.backgroundColor = Color.congestionMiddle
                     sheetView.congestionLable.text = self.congestionLableText
-                    return
                 case "붐빔":
                     sheetView.congestionLable.backgroundColor = Color.congestionLot
                     sheetView.congestionLable.text = self.congestionLableText
-                    return
                 default:
                     break
                 }
@@ -129,6 +156,27 @@ class SheetViewController: UIViewController {
             }
         }
         
+    }
+}
+
+extension SheetViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return events.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EventCell", for: indexPath) as? EventCell else {
+            return UICollectionViewCell()
+        }
+        
+        let event = events[indexPath.row]
+        cell.configure(with: event)
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = collectionView.bounds.width - 20
+        return CGSize(width: width, height: 120)
     }
 }
 

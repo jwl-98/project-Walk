@@ -173,7 +173,7 @@ extension MainViewController: GMSMapViewDelegate {
         print("공원 위 경도: \(destination)")
         //확인필요 - 프로토콜을 통한 데이터 전달 간
         if let title = marker.title {
-            sheetVC.getParkData(parkName: title)
+            sheetVC.getParkData(parkName: title, location: marker.position)
             //기본 이미지 셋팅 (로딩 이미지)
             sheetVC.getParkImage(parkImage: UIImage(systemName: "tree.fill")!)
             print("marker title: \(title)")
