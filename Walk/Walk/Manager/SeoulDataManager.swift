@@ -6,11 +6,13 @@
 //
 
 import Foundation
+import MapKit
 
 struct SeoulDataManager {
     static let shared = SeoulDataManager()
     
-    let parkCongestionURL = "http://openapi.seoul.go.kr:8088/5a464b67516a303936326f676f6c50/json/citydata_ppltn/1/5/"
+    let parkCongestionURL = "http://openapi.seoul.go.kr:8088/5a464b67516a303936326f676f6c50/json/citydata_ppltn/1/100/"
+    let eventURL = "http://openapi.seoul.go.kr:8088/5a464b67516a303936326f676f6c50/json/culturalEventInfo/1/1000/"
     
     func fetchParkCongestionData(placeName: String, completion: @escaping ([ParkCongestionDataModel]?) -> Void) {
         let urlString = "\(parkCongestionURL)\(placeName)"
@@ -98,4 +100,77 @@ struct SeoulDataManager {
         }
     }
     
+}
+
+// MARK: - Event Data Manager Extension(A)
+// MARK: - Event Data Methods
+// MARK: - Event Data Methods
+extension SeoulDataManager {
+    func fetchEventData(parkLocation: CLLocationCoordinate2D, parkName: String, completion: @escaping ([Row]?) -> Void) {
+        guard let url = URL(string: eventURL) else { return }
+        
+        let searchKeyword: String
+        if parkName.contains("한강공원") {
+            searchKeyword = "한강공원"  // 한강공원이 포함된 경우 "한강공원"으로 통일
+        } else {
+            searchKeyword = parkName.replacingOccurrences(of: "(부분개방부지)", with: "")
+                .replacingOccurrences(of: "공원", with: "")
+                .trimmingCharacters(in: .whitespaces)
+        }
+        
+        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+            if let error = error {
+                print("Error fetching event data: \(error)")
+                completion(nil)
+                return
+            }
+            
+            guard let safeData = data else {
+                completion(nil)
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                let eventData = try decoder.decode(EventDataModel.self, from: safeData)
+                print("전체 이벤트 개수: \(eventData.culturalEventInfo.row.count)")
+                
+                let parkLocationObj = CLLocation(latitude: parkLocation.latitude, longitude: parkLocation.longitude)
+                print("공원 위치: \(parkLocation.latitude), \(parkLocation.longitude)")
+                
+                
+                // 공원 위치 기준으로 1km 이내의 이벤트만 필터링
+                let filteredEvents = eventData.culturalEventInfo.row.filter { event in
+                    
+                    let containsKeyword = event.title.contains(searchKeyword) ||
+                    event.place.contains(searchKeyword)
+                    
+                    guard let eventLong = Double(event.lat),  // lat이 실제로는 경도
+                          let eventLat = Double(event.lot) else {  // lot이 실제로는 위도
+                        print("위치 정보 변환 실패: lat=\(event.lat), lot=\(event.lot)")
+                        return false
+                    }
+                    
+                    let eventLocation = CLLocation(latitude: eventLat, longitude: eventLong)
+                    let distance = eventLocation.distance(from: parkLocationObj)
+                    
+                    if containsKeyword {
+                        print("이벤트: \(event.title)")
+                        print("이벤트 장소: \(event.place)")
+                        print("이벤트 기간: \(String(event.strtdate.prefix(10))) ~ \(String(event.endDate.prefix(10)))")
+                        print("------------------------")
+                    }
+                    
+                    return containsKeyword  // 8km 이내
+                }
+                
+                print("필터링 후 이벤트 개수: \(filteredEvents.count)")
+                completion(filteredEvents)
+            } catch {
+                print("Event data parsing error: \(error)")
+                completion(nil)
+            }
+        }
+        task.resume()
+    }
 }
