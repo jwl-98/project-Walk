@@ -25,9 +25,33 @@ class MainViewController: UIViewController{
         coordinate: CLLocationCoordinate2D(latitude: 37.4283, longitude: 127.1836)  // 남동쪽
     )
 
-    override func loadView() {
+//    override func loadView() {
+//        print(#function)
+//        //GMSMapView 인스턴스에서 발생하는 사용자 상호작용의 이벤트를 처리
+//        let camera = GMSCameraPosition.camera(withLatitude: userLocation.latitude, longitude: userLocation.longitude, zoom: 15.0)
+//        
+//        mapView = GMSMapView(frame: .zero, camera: camera)
+//        mapView.settings.myLocationButton = true
+//        mapView.settings.scrollGestures = true
+//        mapView.settings.zoomGestures = true
+//        mapView.delegate = self
+//        placesClient = GMSPlacesClient.shared()
+//        
+//        //검색 진행후 view 초기화
+//        self.view = mapView
+//    }
+    
+    override func viewDidLoad() {
         print(#function)
-        //GMSMapView 인스턴스에서 발생하는 사용자 상호작용의 이벤트를 처리
+        super.viewDidLoad()
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization() // 위치 권한 요청
+        locationManager.startUpdatingLocation()
+    }
+    
+    private func settingMapView() {
+        print(#function)
         let camera = GMSCameraPosition.camera(withLatitude: userLocation.latitude, longitude: userLocation.longitude, zoom: 15.0)
         
         mapView = GMSMapView(frame: .zero, camera: camera)
@@ -39,15 +63,6 @@ class MainViewController: UIViewController{
         
         //검색 진행후 view 초기화
         self.view = mapView
-    }
-    
-    override func viewDidLoad() {
-        print(#function)
-        super.viewDidLoad()
-        locationManager = CLLocationManager()
-        locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization() // 위치 권한 요청
-        locationManager.startUpdatingLocation() //
         mapView.isMyLocationEnabled = true
     }
     
@@ -220,6 +235,7 @@ extension MainViewController: CLLocationManagerDelegate {
         switch manager.authorizationStatus {
             //위치 정보가 활성화 된경우
         case .authorizedWhenInUse:
+            settingMapView()
             enableLocationFeatures()
             break
             
@@ -245,6 +261,7 @@ extension MainViewController: CLLocationManagerDelegate {
             userLocation.latitude = $0.coordinate.latitude
             userLocation.longitude = $0.coordinate.longitude
         }
+        settingMapView()
         parkSearch(userLocation: userLocation)
     }
     
