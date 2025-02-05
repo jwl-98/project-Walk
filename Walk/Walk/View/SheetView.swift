@@ -131,7 +131,8 @@ class SheetView: UIView {
     
     private let noEventLabel: UILabel = {
         let label = UILabel()
-        label.text = "예정 행사가 없는거 같아요"
+        label.text = "예정 행사가 없는거 같아요 \n😢"
+        label.numberOfLines = 2
         label.font = .systemFont(ofSize: 24, weight: .bold)
         label.textAlignment = .center
         label.isHidden = true
