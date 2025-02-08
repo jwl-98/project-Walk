@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		362AD3A49ED4A6289207A367 /* Pods_Walk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 079897EDD98A021027ED60AC /* Pods_Walk.framework */; };
+		E21A86FD2D572CC3009C9C89 /* APIKEY.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = E21A86FC2D572CC3009C9C89 /* APIKEY.xcconfig */; };
 		E289CE222D3B7F2D00134D78 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = E289CE212D3B7F2D00134D78 /* SnapKit */; };
 		E29D20522D51E725007E21FA /* 서울시공중화장실정보.json in Resources */ = {isa = PBXBuildFile; fileRef = E29D20512D51E725007E21FA /* 서울시공중화장실정보.json */; };
 /* End PBXBuildFile section */
@@ -16,6 +17,7 @@
 		0023CCD757CFF7E34769B766 /* Pods-Walk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Walk.release.xcconfig"; path = "Target Support Files/Pods-Walk/Pods-Walk.release.xcconfig"; sourceTree = "<group>"; };
 		079897EDD98A021027ED60AC /* Pods_Walk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Walk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		16DFA78AE1A461808D29BE2F /* Pods-Walk.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Walk.debug.xcconfig"; path = "Target Support Files/Pods-Walk/Pods-Walk.debug.xcconfig"; sourceTree = "<group>"; };
+		E21A86FC2D572CC3009C9C89 /* APIKEY.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = APIKEY.xcconfig; sourceTree = "<group>"; };
 		E289CE082D3B7F0900134D78 /* Walk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Walk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E29D20512D51E725007E21FA /* 서울시공중화장실정보.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "서울시공중화장실정보.json"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -66,6 +68,7 @@
 		E289CDFF2D3B7F0900134D78 = {
 			isa = PBXGroup;
 			children = (
+				E21A86FC2D572CC3009C9C89 /* APIKEY.xcconfig */,
 				E29D20512D51E725007E21FA /* 서울시공중화장실정보.json */,
 				E289CE0A2D3B7F0900134D78 /* Walk */,
 				E289CE092D3B7F0900134D78 /* Products */,
@@ -161,6 +164,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E29D20522D51E725007E21FA /* 서울시공중화장실정보.json in Resources */,
+				E21A86FD2D572CC3009C9C89 /* APIKEY.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,6 +235,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Walk/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "산책가자";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "현재 위치 정보를 기준으로 공원을 띄워주기 때문에 위치정보 허용이 필요해요!";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -264,6 +269,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Walk/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "산책가자";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "현재 위치 정보를 기준으로 공원을 띄워주기 때문에 위치정보 허용이 필요해요!";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -287,6 +293,7 @@
 		};
 		E289CE1E2D3B7F0A00134D78 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E21A86FC2D572CC3009C9C89 /* APIKEY.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

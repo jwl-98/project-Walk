@@ -156,6 +156,7 @@ class SheetView: UIView {
         view.addSubview(eventLabel)
         view.addSubview(eventCollectionView)
         view.addSubview(noEventLabel)
+        view.addSubview(facilitiesTableView)
         
         return view
     }()
@@ -172,6 +173,16 @@ class SheetView: UIView {
         label.addSubview(bottomLine)
         
         return label
+    }()
+    
+    // 시설 정보 테이블 뷰 추가
+    let facilitiesTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(FacilityCell.self, forCellReuseIdentifier: "FacilityCell")
+        tableView.backgroundColor = .white
+        tableView.separatorStyle = .none
+        tableView.isScrollEnabled = true
+        return tableView
     }()
     
     private let lines: UIView = {
@@ -320,8 +331,11 @@ class SheetView: UIView {
             $0.leading.trailing.equalToSuperview().inset(Fedding.normal)
             $0.height.equalTo(30)
         }
-        
-        
+        facilitiesTableView.snp.makeConstraints {
+            $0.top.equalTo(facilitiesLabel.snp.bottom).offset(10)
+            $0.leading.trailing.equalToSuperview().inset(Fedding.normal)
+            $0.bottom.equalTo(eventLabel.snp.top)
+        }
         
     }
 }
@@ -339,8 +353,8 @@ extension SheetView {
     }
 }
 
-@available(iOS 17.0, *)
-#Preview {
-    SheetViewController()
-}
-
+//@available(iOS 17.0, *)
+//#Preview {
+//    SheetViewController()
+//}
+//

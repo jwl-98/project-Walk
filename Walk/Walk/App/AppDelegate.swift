@@ -12,12 +12,13 @@ import GooglePlaces
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
-    
+    let googleApiKey = Bundle.main.infoDictionary?["GOOGLE_MAP_API_KEY"] as! String
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        GMSServices.provideAPIKey("AIzaSyB21DMHmOJHGi9hj5_nTGftNgJojjzM3KI")
-               GMSPlacesClient.provideAPIKey("AIzaSyAv-3pDTqxj5Q2DY1YU6BT1Vwk3SBadELQ")
+        
+        GMSServices.provideAPIKey(googleApiKey)
+        GMSPlacesClient.provideAPIKey(googleApiKey)
         return true
     }
     

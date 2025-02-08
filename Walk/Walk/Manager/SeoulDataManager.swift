@@ -3,7 +3,7 @@
 //  Walk
 //
 //  Created by 진욱의 Macintosh on 1/23/25.
-//
+///
 
 import Foundation
 import MapKit
@@ -11,10 +11,10 @@ import MapKit
 struct SeoulDataManager {
     static let shared = SeoulDataManager()
     
-    let parkCongestionURL = "http://openapi.seoul.go.kr:8088/5a464b67516a303936326f676f6c50/json/citydata_ppltn/1/100/"
-    let eventURL = "http://openapi.seoul.go.kr:8088/5a464b67516a303936326f676f6c50/json/culturalEventInfo/1/1000/"
+    let seoulOpenApiKeys = Bundle.main.infoDictionary?["SEOUL_OPEN_API_KEY"] as! String
     
     func fetchParkCongestionData(placeName: String, completion: @escaping ([ParkCongestionDataModel]?) -> Void) {
+        let parkCongestionURL = "http://openapi.seoul.go.kr:8088/\(seoulOpenApiKeys)/json/citydata_ppltn/1/100/"
         let urlString = "\(parkCongestionURL)\(placeName)"
         print("띄어쓰기 사라진 공원 이름: \(placeName)")
         performRequestParkCongestionData(with: urlString) { congestionData in
@@ -105,8 +105,10 @@ struct SeoulDataManager {
 // MARK: - Event Data Manager Extension(A)
 // MARK: - Event Data Methods
 // MARK: - Event Data Methods
+//이벤트를 가져오는 매니저
 extension SeoulDataManager {
     func fetchEventData(parkLocation: CLLocationCoordinate2D, parkName: String, completion: @escaping ([Row]?) -> Void) {
+        let eventURL = "http://openapi.seoul.go.kr:8088/\(seoulOpenApiKeys)/json/culturalEventInfo/1/1000/"
         guard let url = URL(string: eventURL) else { return }
         
         let searchKeyword: String
@@ -168,6 +170,44 @@ extension SeoulDataManager {
                 completion(filteredEvents)
             } catch {
                 print("Event data parsing error: \(error)")
+                completion(nil)
+            }
+        }
+        task.resume()
+    }
+}
+
+extension SeoulDataManager {
+    func fetchParkInfo(parkName: String, completion: @escaping (InfoData?) -> Void) {
+        let parkInfoURL = "http://openAPI.seoul.go.kr:8088/\(seoulOpenApiKeys)/json/SearchParkInfoService/1/130/"
+        guard let url = URL(string: parkInfoURL) else { return }
+        
+        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+            if let error = error {
+                print("공원 정보 가져오기 실패 \(error)")
+                completion(nil)
+                return
+            }
+            
+            guard let safeData = data else {
+                completion(nil)
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                let parkData = try decoder.decode(ParkInfoDataModel.self, from: safeData)
+                
+                let matchPark = parkData.searchParkInfoService.row.first {park in
+                    
+                    if parkName.contains("한강공원") {
+                        return park.pPark.contains("한강공원")
+                    }
+                    return park.pPark == parkName || park.pPark == parkName
+                }
+                completion(matchPark)
+            } catch {
+                print("공원 정보 파싱 에러 \(error)")
                 completion(nil)
             }
         }
