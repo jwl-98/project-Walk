@@ -13,11 +13,12 @@ protocol ParkLocationDataSource: AnyObject {
 }
 
 class SheetViewController: UIViewController {
-   
+    
     var congestionLableText: String!
     weak var parkDataSource: ParkLocationDataSource?
     let sheetView = SheetView()
     let toiletView = ToiletView()
+    var facilityItems: [(title: String, content: String)] = []
     
     override func loadView() {
         view = sheetView
@@ -26,8 +27,7 @@ class SheetViewController: UIViewController {
         super.viewDidLoad()
         setupAddTarget()
         setupCollectionView()
-
-        
+        setupTableView()
     }
     
     private var events: [Row] = [] {
@@ -40,7 +40,7 @@ class SheetViewController: UIViewController {
     
     private func setupCollectionView() {
         sheetView.setupEventCollectionView(delegate: self, dataSource: self)
-     }
+    }
     //버튼 동작 연결
     private func setupAddTarget() {
         sheetView.tolietViewButton.addTarget(self, action: #selector(toiletButtonTapped), for: .touchUpInside)
@@ -80,7 +80,7 @@ class SheetViewController: UIViewController {
                 }
             }
         }
-
+        
         SeoulDataManager.shared.fetchParkCongestionData(placeName: deleteWhiteSpaceOfParkName) {
             parkData in
             guard let parkData = parkData else {
@@ -180,6 +180,58 @@ extension SheetViewController: UICollectionViewDelegate, UICollectionViewDataSou
     }
 }
 
+
+extension SheetViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    
+    private func setupTableView() {
+        sheetView.facilitiesTableView.delegate = self
+        sheetView.facilitiesTableView.dataSource = self
+    }
+    
+    func updateParkFacilities(parkName: String) {
+        SeoulDataManager.shared.fetchParkInfo(parkName: parkName) { [weak self] parkInfo in
+            guard let self = self,
+                  let parkInfo = parkInfo else { return }
+            
+            self.facilityItems = []
+            
+            // 주요 시설 정보
+            if !parkInfo.mainEquip.isEmpty {
+                self.facilityItems.append(("주요 시설", parkInfo.mainEquip))
+            }
+            //
+            //            // 주요 식물
+            //            if !parkInfo.mainPlants.isEmpty {
+            //                self.facilityItems.append(("주요 식물", parkInfo.mainPlants))
+            //            }
+            //
+            //            // 이용 안내
+            //            if !parkInfo.guidance.isEmpty {
+            //                self.facilityItems.append(("이용 안내", parkInfo.guidance))
+            //            }
+            
+            DispatchQueue.main.async {
+                self.sheetView.facilitiesTableView.reloadData()
+            }
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return facilityItems.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "FacilityCell", for: indexPath) as? FacilityCell else {
+            return UITableViewCell()
+        }
+        
+        let item = facilityItems[indexPath.row]
+        cell.configure(title: item.title, content: item.content)
+        cell.selectionStyle = .none
+        return cell
+    }
+}
 //@available(iOS 17.0, *)
 //#Preview {
 //    SheetViewController()

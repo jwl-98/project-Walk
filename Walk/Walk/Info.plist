@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>현재 위치 정보를 기준으로 공원을 띄워주기 때문에 위치정보 허용이 필요해요!</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -15,6 +13,8 @@
 			</array>
 		</dict>
 	</array>
+	<key>GOOGLE_MAP_API_KEY</key>
+	<string>$(GOOGLE_MAP_API_KEY)</string>
 	<key>MKDirectionsApplicationSupportedModes</key>
 	<array>
 		<string>MKDirectionsModeOther</string>
@@ -24,6 +24,8 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>SEOUL_OPEN_API_KEY</key>
+	<string>$(SEOUL_OPEN_API_KEY)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
