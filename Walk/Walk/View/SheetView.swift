@@ -75,8 +75,11 @@ class SheetView: UIView {
     private let tolietSFIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.tintColor = .white
-        imageView.image = UIImage(systemName: "toilet.circle.fill")
-        
+        imageView.backgroundColor = .white
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 28/2
+        imageView.image = UIImage(named: "화장실icon")
+       
         return imageView
     }()
     
@@ -92,6 +95,8 @@ class SheetView: UIView {
         let label = UILabel()
         
         label.text = "화장실 위치 확인하기"
+        //label.textAlignment = .center
+        //label.backgroundColor = .red
         label.textColor = .white
         label.font = .systemFont(ofSize: 17, weight: .semibold)
         
@@ -99,7 +104,7 @@ class SheetView: UIView {
     }()
     
     private lazy var stackViewForToilet: UIStackView = {
-        let st = UIStackView(arrangedSubviews: [tolietSFIcon,tolietViewLabel,rightSFIcon])
+        let st = UIStackView(arrangedSubviews: [tolietSFIcon,tolietViewLabel])
         st.distribution = .fill
         st.alignment = .center
         st.backgroundColor = Color.toiletBackGround
@@ -272,21 +277,24 @@ class SheetView: UIView {
         }
         
         tolietSFIcon.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(Fedding.normal)
-            $0.height.width.equalTo(38)
+            $0.leading.equalToSuperview().offset(90)
+//            $0.leading.equalToSuperview().offset(Fedding.normal)
+           // $0.trailing.equalTo(tolietViewLabel.snp.leading).offset(20)
+            $0.height.width.equalTo(28)
             $0.centerY.equalToSuperview()
         }
         tolietViewLabel.snp.makeConstraints {
-            $0.leading.equalTo(tolietSFIcon.snp.trailing).offset(10)
-            $0.trailing.equalTo(rightSFIcon.snp.leading).offset(-10)
-            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(10)
+//            $0.trailing.equalTo(rightSFIcon.snp.leading).offset(-10)
+            //$0.centerY.equalToSuperview()
+            $0.width.equalTo(60)
         }
-        rightSFIcon.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(Fedding.normal)
-            $0.width.equalTo(15)
-            $0.height.equalTo(24)
-            $0.centerY.equalToSuperview()
-        }
+//        rightSFIcon.snp.makeConstraints {
+//            $0.trailing.equalToSuperview().inset(Fedding.normal)
+//            $0.width.equalTo(15)
+//            $0.height.equalTo(24)
+//            $0.centerY.equalToSuperview()
+//        }
         
     }
     
@@ -353,8 +361,8 @@ extension SheetView {
     }
 }
 
-//@available(iOS 17.0, *)
-//#Preview {
-//    SheetViewController()
-//}
-//
+@available(iOS 17.0, *)
+#Preview {
+    SheetViewController()
+}
+

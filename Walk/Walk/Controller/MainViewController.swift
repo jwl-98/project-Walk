@@ -104,7 +104,8 @@ class MainViewController: UIViewController{
                 SeoulDataManager.shared.fetchParkCongestionData(placeName: deleteWhiteSpaceOfParkName) { parkData in
                     guard let parkData = parkData?.first else {
                         DispatchQueue.main.async {
-                            marker.icon = GMSMarker.markerImage(with: Color.congestionNone)
+                            //marker.icon = UIImage(named: "Marker_Default")
+                            //marker.icon = GMSMarker.markerImage(with: Color.congestionNone)
                         }
                         return
                     }
@@ -112,19 +113,20 @@ class MainViewController: UIViewController{
                     DispatchQueue.main.async {
                         switch parkData.placeCongestLV {
                         case "여유":
-                            marker.icon = GMSMarker.markerImage(with: Color.congestionRelex)
+                            marker.icon = MarkerImage.markerGreen/*GMSMarker.markerImage(with: Color.congestionRelex)*/
                         case "보통":
-                            marker.icon = GMSMarker.markerImage(with: Color.congestionNormal)
+                            marker.icon = MarkerImage.markerYellow/*GMSMarker.markerImage(with: Color.congestionNormal)*/
                         case "약간 붐빔":
-                            marker.icon = GMSMarker.markerImage(with: Color.congestionMiddle)
+                            marker.icon = MarkerImage.markerOrange/*GMSMarker.markerImage(with: Color.congestionMiddle)*/
                         case "혼잡":
-                            marker.icon = GMSMarker.markerImage(with: Color.congestionLot)
+                            marker.icon = MarkerImage.markerRed/* GMSMarker.markerImage(with: Color.congestionLot)*/
                         default:
-                            marker.icon = GMSMarker.markerImage(with:  Color.congestionNone)
+                            marker.icon = MarkerImage.markerDefault/*GMSMarker.markerImage(with:  Color.congestionNone)*/
                         }
                     }
                 }
-                marker.icon = GMSMarker.markerImage(with: Color.congestionNone)
+                //marker.icon = GMSMarker.markerImage(with: Color.congestionNone)
+                marker.icon = MarkerImage.markerDefault
                 marker.title = result.name!
                 marker.map = self.mapView
                 marker.userData = result.placeID
