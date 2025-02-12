@@ -26,15 +26,12 @@ class EventCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = CornerRadius.normal
         imageView.clipsToBounds = true
-        imageView.image = UIImage(named: "parkImageDummy")
-        
         
         return imageView
     }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "타이틀 UI 작업 확인용"
         label.textAlignment = .center
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 16, weight: .bold)
@@ -45,7 +42,6 @@ class EventCell: UICollectionViewCell {
     
     private let placeLabel: UILabel = {
         let label = UILabel()
-        label.text = "장소 UI 작업 확인용"
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 14)
         label.textColor = .systemGray
@@ -54,14 +50,12 @@ class EventCell: UICollectionViewCell {
     
     private let dateImage: UIImageView = {
         let image = UIImageView()
-        
         image.image = UIImage(named: "캘린더")
         
         return image
     }()
     private let dateLabel: UILabel = {
         let label = UILabel()
-        label.text = "2025-04-12 ~ 2025-04-12"
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 12, weight: .semibold)
         return label
@@ -127,7 +121,6 @@ class EventCell: UICollectionViewCell {
         titleLabel.text = event.title
         placeLabel.text = event.place
         loadImage(imageUrl: event.mainImg)
-        print("이미지 링크 : \(event.mainImg)")
         
         let startDate = String(event.strtdate.prefix(10))
         let endDate = String(event.endDate.prefix(10))
@@ -139,6 +132,7 @@ class EventCell: UICollectionViewCell {
         titleLabel.text = nil
         placeLabel.text = nil
         dateLabel.text = nil
+        eventImageView.image = nil
     }
     
     private func loadImage(imageUrl: String) {
