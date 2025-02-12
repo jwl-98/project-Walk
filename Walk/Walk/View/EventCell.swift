@@ -126,6 +126,8 @@ class EventCell: UICollectionViewCell {
     func configure(with event: Row) {
         titleLabel.text = event.title
         placeLabel.text = event.place
+        loadImage(imageUrl: event.mainImg)
+        print("이미지 링크 : \(event.mainImg)")
         
         let startDate = String(event.strtdate.prefix(10))
         let endDate = String(event.endDate.prefix(10))
@@ -138,9 +140,22 @@ class EventCell: UICollectionViewCell {
         placeLabel.text = nil
         dateLabel.text = nil
     }
+    
+    private func loadImage(imageUrl: String) {
+        guard let url = URL(string: imageUrl) else { return
+        }
+        
+        let task = URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
+            guard let self = self , let data = data, error == nil, let image = UIImage(data: data) else {return}
+            DispatchQueue.main.async {
+                self.eventImageView.image = image
+            }
+        }
+        task.resume()
+    }
 }
 
-@available(iOS 17.0, *)
-#Preview {
-    CellViewController()
-}
+//@available(iOS 17.0, *)
+//#Preview {
+//    CellViewController()
+//}
