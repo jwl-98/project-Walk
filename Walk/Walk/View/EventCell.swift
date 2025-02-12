@@ -26,6 +26,8 @@ class EventCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = CornerRadius.normal
         imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
+        imageView.backgroundColor = .systemGray6
         
         return imageView
     }()
