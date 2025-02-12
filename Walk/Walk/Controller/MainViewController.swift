@@ -118,7 +118,7 @@ class MainViewController: UIViewController{
                             marker.icon = MarkerImage.markerYellow/*GMSMarker.markerImage(with: Color.congestionNormal)*/
                         case "약간 붐빔":
                             marker.icon = MarkerImage.markerOrange/*GMSMarker.markerImage(with: Color.congestionMiddle)*/
-                        case "혼잡":
+                        case "붐빔":
                             marker.icon = MarkerImage.markerRed/* GMSMarker.markerImage(with: Color.congestionLot)*/
                         default:
                             marker.icon = MarkerImage.markerDefault/*GMSMarker.markerImage(with:  Color.congestionNone)*/

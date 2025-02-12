@@ -161,6 +161,7 @@ class SheetViewController: UIViewController {
 
 extension SheetViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        print(#function)
         return events.count
     }
     
@@ -174,9 +175,15 @@ extension SheetViewController: UICollectionViewDelegate, UICollectionViewDataSou
         return cell
     }
     
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.bounds.width - 20
-        return CGSize(width: width, height: 120)
+        let spacing: CGFloat = 12 // 셀 사이 간격
+        let numberOfItemsPerRow: CGFloat = 2 // 한 행에 보여질 셀 개수
+        let width = (collectionView.bounds.width - spacing * (numberOfItemsPerRow - 1)) / numberOfItemsPerRow
+        //        let width = collectionView.bounds.width
+        //        print(width)
+        
+        return CGSize(width: width, height: 260)
     }
 }
 
@@ -236,4 +243,4 @@ extension SheetViewController: UITableViewDelegate, UITableViewDataSource {
 //#Preview {
 //    SheetViewController()
 //}
-//
+

@@ -36,6 +36,7 @@ public enum MarkerImage {
 }
 public enum Fedding {
     static let normal: CGFloat = 20
+    static let item: CGFloat = 12
 }
 
 public enum CornerRadius {

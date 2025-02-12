@@ -3,8 +3,6 @@
 //  Walk
 //
 //  Created by 진욱의 Macintosh on 1/22/25.
-//
-
 import UIKit
 import SnapKit
 
@@ -20,6 +18,17 @@ class SheetView: UIView {
         view.addSubview(parkImageView)
         view.addSubview(congestionLable)
         view.addSubview(parkNameLable)
+        
+        return view
+    }()
+    
+    private lazy var scrollView: UIScrollView = {
+        let view = UIScrollView()
+        
+        view.addSubview(mainView)
+        view.addSubview(stackViewForToilet)
+        view.addSubview(sectionLabel)
+        view.addSubview(subView)
         
         return view
     }()
@@ -123,14 +132,14 @@ class SheetView: UIView {
     
     private lazy var eventCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
+        layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 10
-        layout.minimumInteritemSpacing = 10
+        //layout.minimumInteritemSpacing = 10
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .clear
         collectionView.register(EventCell.self, forCellWithReuseIdentifier: "EventCell")
         collectionView.showsVerticalScrollIndicator = false
+        collectionView.backgroundColor = .red
         return collectionView
     }()
     
@@ -205,7 +214,6 @@ class SheetView: UIView {
     }()
     
     
-    
     @objc
     func toiletButton() {
         print("화장실 버튼 눌림")
@@ -214,8 +222,9 @@ class SheetView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = Color.sheetColor
-        TopLabelConfigureUI()
-        MainViewConfigureUI()
+        topLabelConfigureUI()
+        scrollViewConfigureUI()
+        mainViewConfigureUI()
         toiletConfigureUI()
         bottomViewConfigureUI()
     }
@@ -223,7 +232,7 @@ class SheetView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    private func TopLabelConfigureUI() {
+        private func topLabelConfigureUI() {
         self.addSubview(leftTimeLabel)
         
         leftTimeLabel.snp.makeConstraints {
@@ -231,15 +240,26 @@ class SheetView: UIView {
             $0.top.equalToSuperview().offset(Fedding.normal)
         }
     }
-    private func MainViewConfigureUI() {
-        self.addSubview(mainView)
+    private func scrollViewConfigureUI() {
+        self.addSubview(scrollView)
+        
+        scrollView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+            $0.top.equalTo(leftTimeLabel.snp.bottom).offset(20)
+            $0.bottom.equalToSuperview()
+        }
+    }
+    private func mainViewConfigureUI() {
+        //self.addSubview(mainView)
         
         mainView.snp.makeConstraints {
-            $0.top.equalTo(leftTimeLabel.snp.bottom).offset(Fedding.normal)
+//            $0.top.equalTo(leftTimeLabel.snp.bottom).offset(Fedding.normal)
+            $0.top.equalTo(scrollView.contentLayoutGuide)
             $0.height.equalTo(182)
             $0.width.equalTo(368)
-            $0.leading.equalToSuperview().offset(Fedding.normal)
-            $0.trailing.equalToSuperview().inset(Fedding.normal)
+            $0.leading.trailing.equalTo(scrollView.contentLayoutGuide).offset(Fedding.normal)
+//            $0.leading.equalToSuperview().offset(Fedding.normal)
+//            $0.trailing.equalToSuperview().inset(Fedding.normal)
         }
         
         parkImageView.snp.makeConstraints {
@@ -264,7 +284,7 @@ class SheetView: UIView {
     }
     
     private func toiletConfigureUI() {
-        self.addSubview(stackViewForToilet)
+        //self.addSubview(stackViewForToilet)
         
         tolietViewButton.snp.makeConstraints {
             $0.edges.equalTo(stackViewForToilet)
@@ -297,14 +317,15 @@ class SheetView: UIView {
 //        }
         
     }
-    
+
     private func bottomViewConfigureUI() {
-        [subView, sectionLabel].forEach {self.addSubview($0)}
+        //[subView,sectionLabel].forEach {self.addSubview($0)}
         
         
         eventCollectionView.snp.makeConstraints {
-            $0.top.equalTo(eventLabel.snp.bottom).offset(Fedding.normal)
+            $0.top.equalTo(eventLabel.snp.bottom)
             $0.leading.trailing.equalToSuperview()
+           // $0.height.equalTo(150)
             $0.bottom.equalToSuperview()
         }
         
@@ -314,8 +335,9 @@ class SheetView: UIView {
         subView.snp.makeConstraints {
             $0.centerX.equalTo(mainView.snp.centerX)
             $0.top.equalTo(sectionLabel.snp.bottom).offset(Fedding.normal)
-            $0.height.equalTo(346)
             $0.width.equalTo(368)
+            $0.height.equalTo(350)
+            $0.bottom.equalTo(scrollView.contentLayoutGuide)
         }
         
         sectionLabel.snp.makeConstraints {
@@ -335,7 +357,7 @@ class SheetView: UIView {
 //            $0.leading.trailing.equalToSuperview()
 //            $0.height.equalTo(116)
 //            $0.bottom.equalToSuperview()
-            $0.centerY.equalToSuperview()
+            $0.top.equalTo(facilitiesLabel.snp.bottom).offset(60)
             $0.leading.trailing.equalToSuperview().inset(Fedding.normal)
             $0.height.equalTo(30)
         }
@@ -351,6 +373,17 @@ class SheetView: UIView {
 // MARK: - Public Methods
 extension SheetView {
     func updateEventList(isEmpty: Bool) {
+        print(#function)
+        print(isEmpty)
+        if isEmpty == false {
+            subView.snp.updateConstraints {
+                $0.height.equalTo(650)
+            }
+        } else {
+            subView.snp.updateConstraints {
+                $0.height.equalTo(350)
+            }
+        }
         eventCollectionView.reloadData()
         noEventLabel.isHidden = !isEmpty
     }
