@@ -66,3 +66,13 @@ extension UIColor {
          alpha: alpha)
   }
 }
+
+extension Date {
+    static func todayInt() -> Int {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd"
+        let todayString = dateFormatter.string(from: Date())
+        
+        return Int(todayString)!
+    }
+}
