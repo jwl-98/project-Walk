@@ -34,7 +34,7 @@ public enum MarkerImage {
     static let markerRed = UIImage(named: "Marker_혼잡")
     static let markerToiler = UIImage(named: "Marker_화장실")
 }
-public enum Fedding {
+public enum Pedding {
     static let normal: CGFloat = 20
     static let item: CGFloat = 12
 }

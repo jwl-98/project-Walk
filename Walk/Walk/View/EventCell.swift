@@ -11,7 +11,6 @@ import UIKit
 class EventCell: UICollectionViewCell {
     private lazy var containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = .green
         view.layer.cornerRadius = CornerRadius.normal
         view.clipsToBounds = true
         view.addSubview(eventImageView)
@@ -78,6 +77,7 @@ class EventCell: UICollectionViewCell {
         containerView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.width.equalTo(158)
+            $0.top.equalToSuperview()
             //$0.height.equalTo(280)
             //$0.edges.equalToSuperview().inset(5)
         }

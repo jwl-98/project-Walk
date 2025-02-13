@@ -193,6 +193,7 @@ extension MainViewController: GMSMapViewDelegate {
             sheetVC.getParkData(parkName: title, location: marker.position)
             //기본 이미지 셋팅 (로딩 이미지)
             sheetVC.getParkImage(parkImage: UIImage(systemName: "tree.fill")!)
+            sheetVC.updateParkFacilities(parkName: title)
             print("marker title: \(title)")
         }
         //데이터 제공
