@@ -109,6 +109,7 @@ struct SeoulDataManager {
 extension SeoulDataManager {
     func fetchEventData(parkLocation: CLLocationCoordinate2D, parkName: String, completion: @escaping ([Row]?) -> Void) {
         let eventURL = "http://openapi.seoul.go.kr:8088/\(seoulOpenApiKeys)/json/culturalEventInfo/1/1000/"
+        
         guard let url = URL(string: eventURL) else { return }
         
         let searchKeyword: String
@@ -144,8 +145,20 @@ extension SeoulDataManager {
                 // 공원 위치 기준으로 1km 이내의 이벤트만 필터링
                 let filteredEvents = eventData.culturalEventInfo.row.filter { event in
                     
+                    let startDate = Int(event.strtdate.prefix(10).filter { $0.isNumber == true})!
+                    let endDate = Int(event.endDate.prefix(10).filter { $0.isNumber == true})!
+                    var containsDate = false
+                    
+                    //endDate가 statDate보다 앞선 경우가 존재해 로직 추가
+                    if startDate <= endDate {
+                        containsDate = (startDate...endDate).contains(Date.todayInt())
+                    }
+                   
+                    //공원명을 기반으로 검색 진행하는 로직
                     let containsKeyword = event.title.contains(searchKeyword) ||
                     event.place.contains(searchKeyword)
+                    //현재 날짜가 포함되고, 키워드가 포함된 경우에만 true
+                    let finalResult = containsDate && containsKeyword
                     
                     guard let eventLong = Double(event.lat),  // lat이 실제로는 경도
                           let eventLat = Double(event.lot) else {  // lot이 실제로는 위도
@@ -160,10 +173,12 @@ extension SeoulDataManager {
                         print("이벤트: \(event.title)")
                         print("이벤트 장소: \(event.place)")
                         print("이벤트 기간: \(String(event.strtdate.prefix(10))) ~ \(String(event.endDate.prefix(10)))")
+                        print("startDate: \(startDate), endDate: \(endDate)")
+                        print("출력 확인 \(event.strtdate.prefix(10)) ")
                         print("------------------------")
                     }
                     
-                    return containsKeyword  // 8km 이내
+                    return finalResult  // 8km 이내
                 }
                 
                 print("필터링 후 이벤트 개수: \(filteredEvents.count)")

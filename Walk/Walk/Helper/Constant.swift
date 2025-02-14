@@ -11,7 +11,7 @@ import UIKit
 public enum Color {
     //시트컬러
     static let sheetColor = UIColor(hexCode: "F7F7F6")
-    static let toiletBackGround = UIColor(hexCode: "007AFF")
+    static let toiletBackGround = UIColor(hexCode: "365E32")
     static let congestionNone = UIColor(hexCode: "#d3d3d3")
     static let congestionRelex = UIColor(hexCode: "00D369") //여유
      static let congestionNormal = UIColor(hexCode: "FEB100") //보통
@@ -26,8 +26,17 @@ public enum Color {
 //    
 }
 
-public enum Fedding {
+public enum MarkerImage {
+    static let markerDefault = UIImage(named: "Marker_기본")
+    static let markerGreen = UIImage(named: "Marker_여유")
+    static let markerYellow = UIImage(named: "Marker_보통")
+    static let markerOrange = UIImage(named: "Marker_약간혼잡")
+    static let markerRed = UIImage(named: "Marker_혼잡")
+    static let markerToiler = UIImage(named: "Marker_화장실")
+}
+public enum Pedding {
     static let normal: CGFloat = 20
+    static let item: CGFloat = 12
 }
 
 public enum CornerRadius {
@@ -56,4 +65,14 @@ extension UIColor {
          blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
          alpha: alpha)
   }
+}
+
+extension Date {
+    static func todayInt() -> Int {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd"
+        let todayString = dateFormatter.string(from: Date())
+        
+        return Int(todayString)!
+    }
 }

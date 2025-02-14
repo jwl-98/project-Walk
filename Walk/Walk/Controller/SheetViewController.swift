@@ -18,7 +18,7 @@ class SheetViewController: UIViewController {
     weak var parkDataSource: ParkLocationDataSource?
     let sheetView = SheetView()
     let toiletView = ToiletView()
-    var facilityItems: [(title: String, content: String)] = []
+    //var facilityItems: [(title: String, content: String)] = []
     
     override func loadView() {
         view = sheetView
@@ -30,10 +30,19 @@ class SheetViewController: UIViewController {
         setupTableView()
     }
     
+    //events 속성이 변경되면 sheetView 메서드 호출
     private var events: [Row] = [] {
-        didSet {
+        didSet { //속성 감시자
             DispatchQueue.main.async {
                 self.sheetView.updateEventList(isEmpty: self.events.isEmpty)
+            }
+        }
+    }
+    
+    private var facilityItems: [(title: String, content: String)] = [] {
+        didSet{
+            DispatchQueue.main.async {
+                self.sheetView.updateFacilitiesItem(isEmpty: self.facilityItems.isEmpty)
             }
         }
     }
@@ -66,7 +75,7 @@ class SheetViewController: UIViewController {
         
         print("위치 정보: \(location.latitude), \(location.longitude)")
         // 해당 공원 근처의 이벤트 데이터 가져오기
-        SeoulDataManager.shared.fetchEventData(parkLocation: location, parkName: parkName) { [weak self] events in
+        SeoulDataManager.shared.fetchEventData(parkLocation: location, parkName: deleteWhiteSpaceOfParkName) { [weak self] events in
             guard let self = self else { return }
             if let events = events {
                 self.events = events
@@ -161,6 +170,7 @@ class SheetViewController: UIViewController {
 
 extension SheetViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        print(#function)
         return events.count
     }
     
@@ -174,9 +184,15 @@ extension SheetViewController: UICollectionViewDelegate, UICollectionViewDataSou
         return cell
     }
     
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.bounds.width - 20
-        return CGSize(width: width, height: 120)
+        let spacing: CGFloat = 12 // 셀 사이 간격
+        let numberOfItemsPerRow: CGFloat = 2 // 한 행에 보여질 셀 개수
+        let width = (collectionView.bounds.width - spacing * (numberOfItemsPerRow - 1)) / numberOfItemsPerRow
+        //        let width = collectionView.bounds.width
+        //        print(width)
+        
+        return CGSize(width: width, height: 260)
     }
 }
 
@@ -190,11 +206,17 @@ extension SheetViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func updateParkFacilities(parkName: String) {
+        print(#function)
+        //let deleteWhiteSpaceOfParkName = parkName.filter { $0.isWhitespace == false }
         SeoulDataManager.shared.fetchParkInfo(parkName: parkName) { [weak self] parkInfo in
-            guard let self = self,
-                  let parkInfo = parkInfo else { return }
-            
+            guard let self = self else {return}
             self.facilityItems = []
+            
+            guard let parkInfo = parkInfo else {
+                //속성 감시자 실행을 위한 셋팅
+                self.facilityItems = []
+                return
+            }
             
             // 주요 시설 정보
             if !parkInfo.mainEquip.isEmpty {
@@ -218,6 +240,8 @@ extension SheetViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        print(#function)
+        print(facilityItems.count)
         return facilityItems.count
     }
     
@@ -225,7 +249,7 @@ extension SheetViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "FacilityCell", for: indexPath) as? FacilityCell else {
             return UITableViewCell()
         }
-        
+        print(#function)
         let item = facilityItems[indexPath.row]
         cell.configure(title: item.title, content: item.content)
         cell.selectionStyle = .none
@@ -236,4 +260,4 @@ extension SheetViewController: UITableViewDelegate, UITableViewDataSource {
 //#Preview {
 //    SheetViewController()
 //}
-//
+
