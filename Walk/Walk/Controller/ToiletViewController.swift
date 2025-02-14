@@ -92,7 +92,7 @@ class ToiletViewController: UIViewController, GMSMapViewDelegate {
                marker.position = CLLocationCoordinate2D(latitude: toilet.toiletLat, longitude: toilet.toiletLong)
                marker.title = toilet.toiletName
                marker.snippet = "공중화장실"
-            marker.icon = UIImage(named: "Marker_화장실") // 화장실 마커는 파란색으로 표시
+            marker.icon = UIImage(named: "Marker_화장실")
                marker.map = mapView
            }
     }
