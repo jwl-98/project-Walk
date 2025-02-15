@@ -216,7 +216,7 @@ extension MainViewController: GMSMapViewDelegate {
         return true
     }
     
-    //사용자가 서울시에서 벗어난 경우
+    //사용자가 서울시에서 벗어난 경우 - if the User out Of Seoul
     func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
         if !seoulBounds.contains(position.target) {
             let update = GMSCameraUpdate.setTarget(userLocation, zoom: 15.0)
@@ -272,8 +272,20 @@ extension MainViewController: CLLocationManagerDelegate {
         print("위치 정보 활성화, 앱 실행")
     }
     
+    //TODO: 위치서비스가 비활성화 된 경우 위치 서비스 설정 화면으로 이동 시키기
     func disableLocationFeatures() {
         print("위치 정보 비활성화, 앱 종료")
+        
+        let alert =  UIAlertController(title: "위치 서비스가 비활성화 상태에요!", message: "위치서비스를 허용 시켜주세요!", preferredStyle: .alert)
+        let alertAction = UIAlertAction(title: "확인", style: .default) { _ in
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+        }
+        alert.addAction(alertAction)
+        DispatchQueue.main.async {
+                  self.present(alert, animated: true, completion: nil)
+              }
     }
 }
 
