@@ -24,22 +24,22 @@ class MainViewController: UIViewController{
         coordinate: CLLocationCoordinate2D(latitude: 37.7019, longitude: 126.7341), // 북서쪽
         coordinate: CLLocationCoordinate2D(latitude: 37.4283, longitude: 127.1836)  // 남동쪽
     )
-
-//    override func loadView() {
-//        print(#function)
-//        //GMSMapView 인스턴스에서 발생하는 사용자 상호작용의 이벤트를 처리
-//        let camera = GMSCameraPosition.camera(withLatitude: userLocation.latitude, longitude: userLocation.longitude, zoom: 15.0)
-//        
-//        mapView = GMSMapView(frame: .zero, camera: camera)
-//        mapView.settings.myLocationButton = true
-//        mapView.settings.scrollGestures = true
-//        mapView.settings.zoomGestures = true
-//        mapView.delegate = self
-//        placesClient = GMSPlacesClient.shared()
-//        
-//        //검색 진행후 view 초기화
-//        self.view = mapView
-//    }
+    
+    //    override func loadView() {
+    //        print(#function)
+    //        //GMSMapView 인스턴스에서 발생하는 사용자 상호작용의 이벤트를 처리
+    //        let camera = GMSCameraPosition.camera(withLatitude: userLocation.latitude, longitude: userLocation.longitude, zoom: 15.0)
+    //
+    //        mapView = GMSMapView(frame: .zero, camera: camera)
+    //        mapView.settings.myLocationButton = true
+    //        mapView.settings.scrollGestures = true
+    //        mapView.settings.zoomGestures = true
+    //        mapView.delegate = self
+    //        placesClient = GMSPlacesClient.shared()
+    //
+    //        //검색 진행후 view 초기화
+    //        self.view = mapView
+    //    }
     
     override func viewDidLoad() {
         print(#function)
@@ -218,12 +218,12 @@ extension MainViewController: GMSMapViewDelegate {
     
     //사용자가 서울시에서 벗어난 경우 - if the User out Of Seoul
     func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
-        if !seoulBounds.contains(position.target) {
-            let update = GMSCameraUpdate.setTarget(userLocation, zoom: 15.0)
-            mapView.animate(with: update)
-            print("서울에서 벗어남")
-        }
-        print("서울 내부임")
+//        if !seoulBounds.contains(position.target) {
+//            let update = GMSCameraUpdate.setTarget(userLocation, zoom: 15.0)
+//            mapView.animate(with: update)
+//            print("서울에서 벗어남")
+//        }
+//        print("서울 내부임")
     }
     
 }
@@ -255,37 +255,54 @@ extension MainViewController: CLLocationManagerDelegate {
             break
         }
     }
+    //TODO: 유저 위치가 서울시가 아닌 경우 얼럿창 띄우기.
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         print(#function)
         print("유저 현재 위치가져오기 성공")
-        let update = GMSCameraUpdate.setTarget(userLocation, zoom: 15.0)
-        mapView.animate(with: update)
         locations.forEach {
             userLocation.latitude = $0.coordinate.latitude
             userLocation.longitude = $0.coordinate.longitude
         }
-        settingMapView()
-        parkSearch(userLocation: userLocation)
+        
+        if !seoulBounds.contains(userLocation) {
+            print("사용자의 위치는 서울이 아님")
+            userNotInSeoul()
+        } else {
+            settingMapView()
+            parkSearch(userLocation: userLocation)
+        }
+        
     }
     
-    func enableLocationFeatures() {
+    private func enableLocationFeatures() {
         print("위치 정보 활성화, 앱 실행")
     }
     
     //TODO: 위치서비스가 비활성화 된 경우 위치 서비스 설정 화면으로 이동 시키기
-    func disableLocationFeatures() {
+    private func disableLocationFeatures() {
         print("위치 정보 비활성화, 앱 종료")
         
         let alert =  UIAlertController(title: "위치 서비스가 비활성화 상태에요!", message: "위치서비스를 허용 시켜주세요!", preferredStyle: .alert)
         let alertAction = UIAlertAction(title: "확인", style: .default) { _ in
             if let url = URL(string: UIApplication.openSettingsURLString) {
-                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
         }
         alert.addAction(alertAction)
         DispatchQueue.main.async {
-                  self.present(alert, animated: true, completion: nil)
-              }
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    //유저 위치가 서울이 아닌 경우
+    private func userNotInSeoul() {
+        let alert =  UIAlertController(title: "서울이 아니시군요!", message: "현재는 서울만 서비스가 가능해요.😢", preferredStyle: .alert)
+        let alertAction = UIAlertAction(title: "확인", style: .default)
+        
+        alert.addAction(alertAction)
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
     }
 }
 

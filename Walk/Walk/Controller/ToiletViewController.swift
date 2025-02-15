@@ -50,7 +50,7 @@ class ToiletViewController: UIViewController, GMSMapViewDelegate {
       
         let parkMarker = GMSMarker(position: parkLocation.parkLocation)
                parkMarker.title = parkLocation.parkName
-               parkMarker.icon = GMSMarker.markerImage(with: .green)  // 공원 마커는 녹색으로
+               //parkMarker.icon = GMSMarker.markerImage(with: .green)  // 공원 마커는 녹색으로
                parkMarker.map = mapView
     }
         
