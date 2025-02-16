@@ -68,18 +68,28 @@ class MainViewController: UIViewController{
     
     func parkSearch(userLocation: CLLocationCoordinate2D) {
         print(#function)
+        print("__DDDDD")
+        print(userLocation)
         let myProperties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.placeID].map {$0.rawValue}
-        let request = GMSPlaceSearchByTextRequest(textQuery:"park in seoul", placeProperties:myProperties)
-        request.includedType = "park"
-        request.maxResultCount = 50
-        request.rankPreference = .distance
-        request.isStrictTypeFiltering = true
-        request.locationBias =  GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(userLocation.latitude, userLocation.longitude), 1500.0)
+//        let request = GMSPlaceSearchByTextRequest(textQuery:"park in seoul", placeProperties:myProperties)
+//        request.includedType = "park"
+//        request.maxResultCount = 20
+//        request.rankPreference = .distance
+//        request.isStrictTypeFiltering = true
+//        request.locationBias =  GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(userLocation.latitude, userLocation.longitude), 1500.0)
+        
+        let circularLocationRestriction = GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(userLocation.latitude, userLocation.longitude), 3000.0)
+        let placeProperties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.placeID].map {$0.rawValue}
+
+        
+        var request = GMSPlaceSearchNearbyRequest(locationRestriction: circularLocationRestriction, placeProperties: placeProperties)
+        let includedTypes = ["park"]
+        request.includedTypes = includedTypes
         
         // Array to hold the places in the response
         var placeResults: [GMSPlace] = []
         
-        let callback: GMSPlaceSearchByTextResultCallback = { [weak self] results, error in
+        let callback: GMSPlaceSearchNearbyResultCallback = { [weak self] results, error in
             guard let self, error == nil else {
                 if let error {
                     print("검색 에러 : \(error.localizedDescription)")
@@ -133,7 +143,8 @@ class MainViewController: UIViewController{
             }
         }
         
-        GMSPlacesClient.shared().searchByText(with: request, callback: callback)
+//        GMSPlacesClient.shared().searchByText(with: request, callback: callback)
+        GMSPlacesClient.shared().searchNearby(with: request, callback: callback)
     }
     
     func fetchPlaceImage(placeID: String, completion: @escaping (UIImage) -> ()) {
@@ -149,12 +160,16 @@ class MainViewController: UIViewController{
                 print("An error occurred: \(error.localizedDescription)")
                 return
             }
+            //사진 데이터가 없는 경우 처리??
             if let place = place {
                 // Get the metadata for the first photo in the place photo metadata list.
-                let photoMetadata: GMSPlacePhotoMetadata = place.photos![0]
+                var photoMetadataArray: GMSPlacePhotoMetadata!
+                guard let photoMetadata = place.photos else { return }
+                photoMetadataArray = photoMetadata[0]
+//                let photoMetadata: GMSPlacePhotoMetadata = place.photos![0]
                 
                 // Call loadPlacePhoto to display the bitmap and attribution.
-                self.placesClient.loadPlacePhoto(photoMetadata, callback: { (photo, error) -> Void in
+                self.placesClient.loadPlacePhoto(photoMetadataArray, callback: { (photo, error) -> Void in
                     if let error = error {
                         // TODO: Handle the error.
                         print("Error loading photo metadata: \(error.localizedDescription)")
@@ -192,7 +207,7 @@ extension MainViewController: GMSMapViewDelegate {
         if let title = marker.title {
             sheetVC.getParkData(parkName: title, location: marker.position)
             //기본 이미지 셋팅 (로딩 이미지)
-            sheetVC.getParkImage(parkImage: UIImage(systemName: "tree.fill")!)
+            sheetVC.getParkImage(parkImage: UIImage(named: "공원 기본 이미지.png")!)
             sheetVC.updateParkFacilities(parkName: title)
             print("marker title: \(title)")
         }
@@ -283,12 +298,15 @@ extension MainViewController: CLLocationManagerDelegate {
         print("위치 정보 비활성화, 앱 종료")
         
         let alert =  UIAlertController(title: "위치 서비스가 비활성화 상태에요!", message: "위치서비스를 허용 시켜주세요!", preferredStyle: .alert)
-        let alertAction = UIAlertAction(title: "확인", style: .default) { _ in
+        let alertOKAction = UIAlertAction(title: "확인", style: .default) { _ in
             if let url = URL(string: UIApplication.openSettingsURLString) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
         }
-        alert.addAction(alertAction)
+        let alertCancelAction = UIAlertAction(title: "취소", style: .destructive)
+        
+        alert.addAction(alertOKAction)
+        alert.addAction(alertCancelAction)
         DispatchQueue.main.async {
             self.present(alert, animated: true, completion: nil)
         }
@@ -300,9 +318,7 @@ extension MainViewController: CLLocationManagerDelegate {
         let alertAction = UIAlertAction(title: "확인", style: .default)
         
         alert.addAction(alertAction)
-        DispatchQueue.main.async {
-            self.present(alert, animated: true, completion: nil)
-        }
+        self.present(alert, animated: true, completion: nil)
     }
 }
 
