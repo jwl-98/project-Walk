@@ -97,7 +97,7 @@ class MainViewController: UIViewController{
                 }
                 return
             }
-            guard let results = results as? [GMSPlace] else {
+            guard let results = results else {
                 return
             }
             //검색이 끝난 시점
