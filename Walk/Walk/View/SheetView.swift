@@ -272,7 +272,10 @@ class SheetView: UIView {
             $0.top.equalTo(scrollView.contentLayoutGuide)
             $0.height.equalTo(182)
             $0.width.equalTo(368)
-            $0.leading.trailing.equalTo(scrollView.contentLayoutGuide).offset(Pedding.normal)
+            $0.centerX.equalToSuperview()
+//           $0.leading.equalTo(scrollView.contentLayoutGuide).offset(Pedding.normal)
+//            $0.trailing.equalToSuperview()
+ 
 //            $0.leading.equalToSuperview().offset(Fedding.normal)
 //            $0.trailing.equalToSuperview().inset(Fedding.normal)
         }
@@ -421,8 +424,8 @@ extension SheetView {
     }
 }
 
-//@available(iOS 17.0, *)
-//#Preview {
-//    SheetViewController()
-//}
+@available(iOS 17.0, *)
+#Preview {
+    SheetViewController()
+}
 
