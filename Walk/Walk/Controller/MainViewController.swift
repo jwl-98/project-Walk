@@ -82,7 +82,7 @@ class MainViewController: UIViewController{
         let placeProperties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.placeID].map {$0.rawValue}
 
         
-        var request = GMSPlaceSearchNearbyRequest(locationRestriction: circularLocationRestriction, placeProperties: placeProperties)
+        let request = GMSPlaceSearchNearbyRequest(locationRestriction: circularLocationRestriction, placeProperties: placeProperties)
         let includedTypes = ["park"]
         request.includedTypes = includedTypes
         
@@ -187,7 +187,7 @@ class MainViewController: UIViewController{
         if let sheet = sheetVC.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
             //시트 상단바 표시 옵션
-            sheet.prefersGrabberVisible = true
+            //sheet.prefersGrabberVisible = true
         }
         present(sheetVC, animated: true)
     }

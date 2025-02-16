@@ -8,13 +8,20 @@ import SnapKit
 
 class SheetView: UIView {
     
+    
+    private let sheetGrabber: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = DesignComponents.sheetGrabber
+        
+        return imageView
+        
+    }()
     //MARK: 공원대표 사진, 이름 등 메인 탭
     private lazy var mainView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
         view.clipsToBounds = true
         view.layer.cornerRadius = CornerRadius.normal
-        
         view.addSubview(parkImageView)
         view.addSubview(congestionLable)
         view.addSubview(parkNameLable)
@@ -37,7 +44,7 @@ class SheetView: UIView {
         let label = UILabel()
         label.text = "내 위치에서 N분 소요될 예정이에요!"
         label.adjustsFontSizeToFitWidth = true
-        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         
         return label
     }()
@@ -249,11 +256,18 @@ class SheetView: UIView {
     }
         private func topLabelConfigureUI() {
         self.addSubview(leftTimeLabel)
+            self.addSubview(sheetGrabber)
         
         leftTimeLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(Pedding.normal)
+            $0.top.equalToSuperview().offset(40)
         }
+            sheetGrabber.snp.makeConstraints {
+                $0.centerX.equalToSuperview()
+                $0.width.equalTo(72)
+                $0.height.equalTo(6)
+                $0.bottom.equalTo(leftTimeLabel.snp.top).offset(-10)
+            }
     }
     private func scrollViewConfigureUI() {
         self.addSubview(scrollView)

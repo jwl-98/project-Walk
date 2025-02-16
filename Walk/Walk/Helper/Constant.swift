@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SnapKit
 
 public enum Color {
     //시트컬러
@@ -32,7 +33,20 @@ public enum MarkerImage {
     static let markerYellow = UIImage(named: "Marker_보통")
     static let markerOrange = UIImage(named: "Marker_약간혼잡")
     static let markerRed = UIImage(named: "Marker_혼잡")
-    static let markerToiler = UIImage(named: "Marker_화장실")
+    static let markerToilet = UIImage(named: "Marker_화장실")
+    
+    static let markerToiletTese: UIImageView = {
+        let imageView = UIImageView()
+        
+        imageView.image = UIImage(named: "Group.png")
+        imageView.contentMode = .scaleAspectFit
+        imageView.frame = CGRect(x: 0, y: 0, width: 36, height: 45)
+        return imageView
+    }()
+}
+
+public enum DesignComponents {
+    static let sheetGrabber = UIImage(named: "SheetGrabber")
 }
 public enum Pedding {
     static let normal: CGFloat = 20
