@@ -123,20 +123,21 @@ class MainViewController: UIViewController{
                     DispatchQueue.main.async {
                         switch parkData.placeCongestLV {
                         case "여유":
-                            marker.icon = MarkerImage.markerGreen/*GMSMarker.markerImage(with: Color.congestionRelex)*/
+                            marker.iconView = MarkerImage.markerGreen/*GMSMarker.markerImage(with: Color.congestionRelex)*/
                         case "보통":
-                            marker.icon = MarkerImage.markerYellow/*GMSMarker.markerImage(with: Color.congestionNormal)*/
+                            marker.iconView = MarkerImage.markerYellow/*GMSMarker.markerImage(with: Color.congestionNormal)*/
                         case "약간 붐빔":
-                            marker.icon = MarkerImage.markerOrange/*GMSMarker.markerImage(with: Color.congestionMiddle)*/
+                            marker.iconView = MarkerImage.markerOrange/*GMSMarker.markerImage(with: Color.congestionMiddle)*/
                         case "붐빔":
-                            marker.icon = MarkerImage.markerRed/* GMSMarker.markerImage(with: Color.congestionLot)*/
+                            marker.iconView = MarkerImage.markerRed/* GMSMarker.markerImage(with: Color.congestionLot)*/
                         default:
-                            marker.icon = MarkerImage.markerDefault/*GMSMarker.markerImage(with:  Color.congestionNone)*/
+                            marker.iconView = MarkerImage.markerDefault/*GMSMarker.markerImage(with:  Color.congestionNone)*/
                         }
                     }
                 }
                 //marker.icon = GMSMarker.markerImage(with: Color.congestionNone)
-                marker.icon = MarkerImage.markerDefault
+                //marker.icon = MarkerImage.markerDefault
+                marker.iconView = MarkerImage.markerDefault
                 marker.title = result.name!
                 marker.map = self.mapView
                 marker.userData = result.placeID
@@ -279,13 +280,16 @@ extension MainViewController: CLLocationManagerDelegate {
             userLocation.longitude = $0.coordinate.longitude
         }
         
-        if !seoulBounds.contains(userLocation) {
-            print("사용자의 위치는 서울이 아님")
-            userNotInSeoul()
-        } else {
-            settingMapView()
-            parkSearch(userLocation: userLocation)
-        }
+        settingMapView()
+        parkSearch(userLocation: userLocation)
+        
+//        if !seoulBounds.contains(userLocation) {
+//            print("사용자의 위치는 서울이 아님")
+//            //userNotInSeoul()
+//        } else {
+//            settingMapView()
+//            parkSearch(userLocation: userLocation)
+//        }
         
     }
     

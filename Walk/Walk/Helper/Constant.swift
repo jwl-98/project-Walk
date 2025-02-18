@@ -28,17 +28,52 @@ public enum Color {
 }
 
 public enum MarkerImage {
-    static let markerDefault = UIImage(named: "Marker_기본")
-    static let markerGreen = UIImage(named: "Marker_여유")
-    static let markerYellow = UIImage(named: "Marker_보통")
-    static let markerOrange = UIImage(named: "Marker_약간혼잡")
-    static let markerRed = UIImage(named: "Marker_혼잡")
-    static let markerToilet = UIImage(named: "Marker_화장실")
-    
-    static let markerToiletTese: UIImageView = {
+    static let markerDefault: UIImageView = {
         let imageView = UIImageView()
         
-        imageView.image = UIImage(named: "Group.png")
+        imageView.image = UIImage(named: "Marker_기본")
+        imageView.contentMode = .scaleAspectFit
+        imageView.frame = CGRect(x: 0, y: 0, width: 41, height: 41)
+        return imageView
+    }()
+    static let markerGreen: UIImageView = {
+        let imageView = UIImageView()
+        
+        imageView.image = UIImage(named: "Marker_여유")
+        imageView.contentMode = .scaleAspectFit
+        imageView.frame = CGRect(x: 0, y: 0, width: 41, height: 41)
+        return imageView
+    }()
+    static let markerYellow: UIImageView = {
+        let imageView = UIImageView()
+        
+        imageView.image = UIImage(named: "Marker_보통")
+        imageView.contentMode = .scaleAspectFit
+        imageView.frame = CGRect(x: 0, y: 0, width: 41, height: 41)
+        return imageView
+    }()
+    
+    static let markerOrange: UIImageView = {
+        let imageView = UIImageView()
+        
+        imageView.image = UIImage(named: "Marker_약간혼잡")
+        imageView.contentMode = .scaleAspectFit
+        imageView.frame = CGRect(x: 0, y: 0, width: 41, height: 41)
+        return imageView
+    }()
+    static let markerRed: UIImageView = {
+        let imageView = UIImageView()
+        
+        imageView.image = UIImage(named: "Marker_혼잡")
+        imageView.contentMode = .scaleAspectFit
+        imageView.frame = CGRect(x: 0, y: 0, width: 41, height: 41)
+        return imageView
+    }()
+  
+    static let MarkerToilet: UIImageView = {
+        let imageView = UIImageView()
+        
+        imageView.image = UIImage(named: "Marker_화장실")
         imageView.contentMode = .scaleAspectFit
         imageView.frame = CGRect(x: 0, y: 0, width: 36, height: 45)
         return imageView
