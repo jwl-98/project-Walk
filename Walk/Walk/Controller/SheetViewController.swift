@@ -97,7 +97,7 @@ class SheetViewController: UIViewController {
                     self.sheetView.congestionLable.text = "혼잡도 정보가 없어요😢"
                     self.sheetView.congestionLable.backgroundColor = .white
                 }
-                print(self.congestionLableText!)
+                print(self.congestionLableText)
                 return
             }
             parkData.forEach {
@@ -192,7 +192,7 @@ extension SheetViewController: UICollectionViewDelegate, UICollectionViewDataSou
         //        let width = collectionView.bounds.width
         //        print(width)
         
-        return CGSize(width: width, height: 260)
+        return CGSize(width: width, height: 380)
     }
 }
 

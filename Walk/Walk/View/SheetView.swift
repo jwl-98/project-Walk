@@ -141,7 +141,6 @@ class SheetView: UIView {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 10
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0) // 여백을 0으로 설정
         layout.minimumInteritemSpacing = 10
 
         
@@ -214,6 +213,7 @@ class SheetView: UIView {
     // 시설 정보 테이블 뷰 추가
     let facilitiesTableView: UITableView = {
         let tableView = UITableView()
+        tableView.backgroundColor = .green
         tableView.register(FacilityCell.self, forCellReuseIdentifier: "FacilityCell")
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
@@ -264,9 +264,9 @@ class SheetView: UIView {
         }
             sheetGrabber.snp.makeConstraints {
                 $0.centerX.equalToSuperview()
-                $0.width.equalTo(72)
+                $0.width.equalTo(41)
                 $0.height.equalTo(6)
-                $0.bottom.equalTo(leftTimeLabel.snp.top).offset(-10)
+                $0.bottom.equalTo(leftTimeLabel.snp.top).offset(-20)
             }
     }
     private func scrollViewConfigureUI() {
