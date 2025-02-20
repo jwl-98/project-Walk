@@ -59,7 +59,7 @@ struct SeoulDataManager {
             
             //데이터 리스트 데이터 모델에 매핑
             let dataListToArray = dataList.map {
-                ParkCongestionDataModel(placeName: $0.areaNm, palceCongestLV: $0.areaCongestLvl)
+                ParkCongestionDataModel(placeName: $0.areaNm, placeCongestLV: $0.areaCongestLvl, placeCongestMSG: $0.areaCongestMSG)
             }
             print("파싱성공")
             return dataListToArray

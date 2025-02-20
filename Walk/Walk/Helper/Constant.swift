@@ -15,16 +15,10 @@ public enum Color {
     static let toiletBackGround = UIColor(hexCode: "365E32")
     static let congestionNone = UIColor(hexCode: "#d3d3d3")
     static let congestionRelex = UIColor(hexCode: "00D369") //여유
-     static let congestionNormal = UIColor(hexCode: "FEB100") //보통
-     static let congestionMiddle = UIColor(hexCode: "FF8041") //약간붐빔
-     static let congestionLot = UIColor(hexCode: "DD1E3D") //혼잡
-    
-    
-//    static let congestionRelex = UIColor(hexCode: "91C6FF") //여유
-//    static let congestionNormal = UIColor(hexCode: "7BE7AA") //보통
-//    static let congestionMiddle = UIColor(hexCode: "FFAF88") //약간붐빔
-//    static let congestionLot = UIColor(hexCode: "FFA39E") //혼잡
-//    
+    static let congestionNormal = UIColor(hexCode: "FEB100") //보통
+    static let congestionMiddle = UIColor(hexCode: "FF8041") //약간붐빔
+    static let congestionLot = UIColor(hexCode: "DD1E3D") //혼잡
+    static let popViewBackground = UIColor(hexCode: "E7F0DC")
 }
 
 public enum MarkerImage {
@@ -69,7 +63,7 @@ public enum MarkerImage {
         imageView.frame = CGRect(x: 0, y: 0, width: 41, height: 41)
         return imageView
     }()
-  
+    
     static let MarkerToilet: UIImageView = {
         let imageView = UIImageView()
         
@@ -96,24 +90,24 @@ public enum CornerRadius {
 
 
 extension UIColor {
-
-  convenience init(hexCode: String, alpha: CGFloat = 1.0) {
-    var hexFormatted: String = hexCode.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).uppercased()
-
-    if hexFormatted.hasPrefix("#") {
-      hexFormatted = String(hexFormatted.dropFirst())
+    
+    convenience init(hexCode: String, alpha: CGFloat = 1.0) {
+        var hexFormatted: String = hexCode.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).uppercased()
+        
+        if hexFormatted.hasPrefix("#") {
+            hexFormatted = String(hexFormatted.dropFirst())
+        }
+        
+        assert(hexFormatted.count == 6, "Invalid hex code used.")
+        
+        var rgbValue: UInt64 = 0
+        Scanner(string: hexFormatted).scanHexInt64(&rgbValue)
+        
+        self.init(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+                  green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+                  blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+                  alpha: alpha)
     }
-
-      assert(hexFormatted.count == 6, "Invalid hex code used.")
-
-    var rgbValue: UInt64 = 0
-    Scanner(string: hexFormatted).scanHexInt64(&rgbValue)
-
-    self.init(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
-         green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
-         blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
-         alpha: alpha)
-  }
 }
 
 extension Date {

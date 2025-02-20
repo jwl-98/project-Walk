@@ -71,6 +71,14 @@ class SheetView: UIView {
         return label
     }()
     
+    let congestionInfoButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "혼잡도 정보 버튼.png"), for: .normal)
+        button.isHidden = true
+        
+        return button
+    }()
+    
     //공원이름 레이블
     var parkNameLable: UILabel = {
         let label = UILabel()
@@ -149,7 +157,7 @@ class SheetView: UIView {
         collectionView.register(EventCell.self, forCellWithReuseIdentifier: "EventCell")
         collectionView.showsVerticalScrollIndicator = false
         //collectionView.backgroundColor = .red
-        collectionView.contentInset = .zero // 컨텐츠 인셋도 0으로 설정
+        collectionView.contentInset = .zero
         return collectionView
     }()
     
@@ -250,6 +258,7 @@ class SheetView: UIView {
         mainViewConfigureUI()
         toiletConfigureUI()
         bottomViewConfigureUI()
+        infoButtonConfigureUI()
     }
     
     required init?(coder: NSCoder) {
@@ -404,6 +413,16 @@ class SheetView: UIView {
             $0.top.equalTo(facilitiesTableView.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(Pedding.normal)
             $0.height.equalTo(30)
+        }
+    }
+    
+     func infoButtonConfigureUI() {
+        self.addSubview(congestionInfoButton)
+        
+        congestionInfoButton.snp.makeConstraints {
+            $0.centerY.equalTo(congestionLable.snp.centerY)
+            $0.trailing.equalTo(congestionLable.snp.trailing).inset(25)
+            $0.width.height.equalTo(24)
         }
     }
 }

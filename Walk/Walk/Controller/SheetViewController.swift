@@ -15,9 +15,11 @@ protocol ParkLocationDataSource: AnyObject {
 class SheetViewController: UIViewController {
     
     var congestionLableText: String!
+    var congestionMSG: String!
     weak var parkDataSource: ParkLocationDataSource?
     let sheetView = SheetView()
     let toiletView = ToiletView()
+    let popVC = PopoverViewController()
     
     override func loadView() {
         view = sheetView
@@ -51,7 +53,9 @@ class SheetViewController: UIViewController {
     }
     //버튼 동작 연결
     private func setupAddTarget() {
+        let action = UIAction(handler: congestionInfoButtonTapped)
         sheetView.tolietViewButton.addTarget(self, action: #selector(toiletButtonTapped), for: .touchUpInside)
+        sheetView.congestionInfoButton.addAction(action, for: .touchUpInside)
     }
     
     @objc
@@ -66,6 +70,20 @@ class SheetViewController: UIViewController {
         navController.modalPresentationStyle = .fullScreen
         present(navController, animated: true)
         print("화장실 버튼 눌림")
+    }
+    
+    func congestionInfoButtonTapped(action: UIAction) {
+        print("정보 버튼 눌림")
+        popVC.modalPresentationStyle = .popover
+        
+        // popover 설정
+        if let popover = popVC.popoverPresentationController {
+            popover.sourceView = sheetView.congestionInfoButton // 실제 화면의 버튼
+            popover.sourceRect = sheetView.congestionInfoButton.bounds
+            popover.permittedArrowDirections = [.down]
+            popover.delegate = popVC
+        }
+        present(popVC, animated: true)
     }
     
     func getParkData(parkName: String, location: CLLocationCoordinate2D) {
@@ -93,36 +111,41 @@ class SheetViewController: UIViewController {
             parkData in
             guard let parkData = parkData else {
                 DispatchQueue.main.async {
+                    self.sheetView.congestionInfoButton.isHidden = true
                     self.sheetView.congestionLable.text = "혼잡도 정보가 없어요😢"
                     self.sheetView.congestionLable.backgroundColor = .white
                 }
-                //디버깅용
-                print(self.congestionLableText)
                 return
             }
             parkData.forEach {
-                self.congestionLableText = $0.placeCongestLV ?? "에러"
+                self.congestionLableText = $0.placeCongestLV ?? "혼잡도 정보가 없어요😢"
+                self.congestionMSG = $0.placeCongestMSG ?? "정보 없음"
             }
             
+            print(self.congestionMSG)
             //붐빔,약간 붐빔, 보통, 여유
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else {return}
-                
+                sheetView.congestionInfoButton.isHidden = false
                 print("혼잡도확인 : \(congestionLableText!) ")
                 
                 switch congestionLableText {
                 case "여유":
                     sheetView.congestionLable.backgroundColor = Color.congestionRelex
                     sheetView.congestionLable.text = self.congestionLableText
+                    popVC.congestionMSGLable.text = self.congestionMSG
                 case "보통":
                     sheetView.congestionLable.backgroundColor = Color.congestionNormal
                     sheetView.congestionLable.text = self.congestionLableText
+                    popVC.congestionMSGLable.text = self.congestionMSG
                 case "약간 붐빔":
                     sheetView.congestionLable.backgroundColor = Color.congestionMiddle
                     sheetView.congestionLable.text = self.congestionLableText
+                    popVC.congestionMSGLable.text = self.congestionMSG
                 case "붐빔":
                     sheetView.congestionLable.backgroundColor = Color.congestionLot
                     sheetView.congestionLable.text = self.congestionLableText
+                    popVC.congestionMSGLable.text = self.congestionMSG
                 default:
                     break
                 }

@@ -31,11 +31,13 @@ struct Result: Codable {
 struct SeoulRtdCitydataPpltn: Codable {
     let areaNm, areaCD: String
     let areaCongestLvl: String
+    let areaCongestMSG: String
 
     enum CodingKeys: String, CodingKey {
         case areaNm = "AREA_NM"
         case areaCD = "AREA_CD"
         case areaCongestLvl = "AREA_CONGEST_LVL"
+        case areaCongestMSG = "AREA_CONGEST_MSG"
     }
 }
 
