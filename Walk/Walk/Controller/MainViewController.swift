@@ -222,6 +222,8 @@ extension MainViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         print(#function)
         print("유저 위치가 이동됨 : \(locations[0])")
+        userLocation.latitude = locations[0].coordinate.latitude
+        userLocation.longitude =  locations[0].coordinate.longitude
         mapView.clear()
         parkSearch(userLocation: locations[0].coordinate)
         
