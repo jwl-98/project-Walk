@@ -9,8 +9,6 @@ import UIKit
 import GoogleMaps
 import GooglePlaces
 
-//데이터 전달을 받기위한 델리게이트 선언
-//?? - AnyObject는 무엇을 의미하는거지?
 
 class MainViewController: UIViewController{
     
@@ -20,10 +18,10 @@ class MainViewController: UIViewController{
     private let sheetVC = SheetViewController()
     private var userLocation = CLLocationCoordinate2D(latitude:  0.0, longitude: 0.0)
     private var parkData: ParkLocation?
-    private let seoulBounds = GMSCoordinateBounds(
-        coordinate: CLLocationCoordinate2D(latitude: 37.7019, longitude: 126.7341), // 북서쪽
-        coordinate: CLLocationCoordinate2D(latitude: 37.4283, longitude: 127.1836)  // 남동쪽
-    )
+//    private let seoulBounds = GMSCoordinateBounds(
+//        coordinate: CLLocationCoordinate2D(latitude: 37.7019, longitude: 126.7341), // 북서쪽
+//        coordinate: CLLocationCoordinate2D(latitude: 37.4283, longitude: 127.1836)  // 남동쪽
+//    )
     
     //    override func loadView() {
     //        print(#function)
@@ -254,8 +252,7 @@ extension MainViewController: CLLocationManagerDelegate {
         switch manager.authorizationStatus {
             //위치 정보가 활성화 된경우
         case .authorizedWhenInUse:
-            settingMapView()
-            enableLocationFeatures()
+            enableLocationFeatures(currentUserLoacation: manager.location)
             break
             
             //위치 정보가 비활성화를 선택한 경우
@@ -271,30 +268,22 @@ extension MainViewController: CLLocationManagerDelegate {
             break
         }
     }
+    
     //TODO: 유저 위치가 서울시가 아닌 경우 얼럿창 띄우기.
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         print(#function)
-        print("유저 현재 위치가져오기 성공")
-        locations.forEach {
-            userLocation.latitude = $0.coordinate.latitude
-            userLocation.longitude = $0.coordinate.longitude
-        }
-        
-        settingMapView()
-        parkSearch(userLocation: userLocation)
-        
-//        if !seoulBounds.contains(userLocation) {
-//            print("사용자의 위치는 서울이 아님")
-//            //userNotInSeoul()
-//        } else {
-//            settingMapView()
-//            parkSearch(userLocation: userLocation)
-//        }
+        print("유저 위치가 이동됨 : \(locations[0])")
         
     }
     
-    private func enableLocationFeatures() {
-        print("위치 정보 활성화, 앱 실행")
+    private func enableLocationFeatures(currentUserLoacation: CLLocation?) {
+        print("위치 정보 활성화, 맵 셋팅")
+        guard let currentUserLoacation = currentUserLoacation else { return }
+        userLocation.latitude = currentUserLoacation.coordinate.latitude
+        userLocation.longitude = currentUserLoacation.coordinate.longitude
+        parkSearch(userLocation: currentUserLoacation.coordinate)
+        settingMapView()
+        
     }
     
     //TODO: 위치서비스가 비활성화 된 경우 위치 서비스 설정 화면으로 이동 시키기
