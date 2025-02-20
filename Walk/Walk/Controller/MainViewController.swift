@@ -26,6 +26,7 @@ class MainViewController: UIViewController{
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization() // 위치 권한 요청
         locationManager.startUpdatingLocation()
+        locationManager.distanceFilter = 100
     }
     
     private func settingMapView() {
@@ -122,7 +123,9 @@ class MainViewController: UIViewController{
             }
             var photoMetadataArray: GMSPlacePhotoMetadata!
             //사진 데이터가 없는 경우
-            if photos?.results.isEmpty == true { return }
+            if photos?.results.isEmpty == true {
+                completion(UIImage(named: "공원 기본 이미지.png")!)
+                return }
             photoMetadataArray = photos?.results[0]
             
             self.placesClient.loadPlacePhoto(photoMetadataArray, callback: { (photo, error) -> Void in
@@ -162,7 +165,6 @@ extension MainViewController: GMSMapViewDelegate {
         if let title = marker.title {
             sheetVC.getParkData(parkName: title, location: marker.position)
             //기본 이미지 셋팅 (로딩 이미지)
-            //sheetVC.getParkImage(parkImage: UIImage(named: "공원 기본 이미지.png")!)
             sheetVC.updateParkFacilities(parkName: title)
             print("marker title: \(title)")
         }
@@ -186,20 +188,13 @@ extension MainViewController: GMSMapViewDelegate {
         return true
     }
     
-    //사용자가 서울시에서 벗어난 경우 - if the User out Of Seoul
-    func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
-        print(#function)
-        print("맵 카메라 변경됨")
-        print(position.target)
-        //parkSearch(userLocation: position.target)
-    }
-    
 }
 
 extension MainViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
         print(#function)
+        print(error.localizedDescription)
     }
     //인증 상태 확인 메서드
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
@@ -223,13 +218,14 @@ extension MainViewController: CLLocationManagerDelegate {
         }
     }
     
-    //TODO: 유저 위치가 서울시가 아닌 경우 얼럿창 띄우기.
+    //유저 위치가 100미터 단위로 이동시 호출
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         print(#function)
         print("유저 위치가 이동됨 : \(locations[0])")
+        mapView.clear()
+        parkSearch(userLocation: locations[0].coordinate)
         
     }
-    
     private func enableLocationFeatures(currentUserLoacation: CLLocation?) {
         print("위치 정보 활성화, 맵 셋팅")
         guard let currentUserLoacation = currentUserLoacation else { return }
