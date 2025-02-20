@@ -9,8 +9,6 @@ import UIKit
 import GoogleMaps
 import GooglePlaces
 
-//데이터 전달을 받기위한 델리게이트 선언
-//?? - AnyObject는 무엇을 의미하는거지?
 
 class MainViewController: UIViewController{
     
@@ -20,26 +18,6 @@ class MainViewController: UIViewController{
     private let sheetVC = SheetViewController()
     private var userLocation = CLLocationCoordinate2D(latitude:  0.0, longitude: 0.0)
     private var parkData: ParkLocation?
-    private let seoulBounds = GMSCoordinateBounds(
-        coordinate: CLLocationCoordinate2D(latitude: 37.7019, longitude: 126.7341), // 북서쪽
-        coordinate: CLLocationCoordinate2D(latitude: 37.4283, longitude: 127.1836)  // 남동쪽
-    )
-
-//    override func loadView() {
-//        print(#function)
-//        //GMSMapView 인스턴스에서 발생하는 사용자 상호작용의 이벤트를 처리
-//        let camera = GMSCameraPosition.camera(withLatitude: userLocation.latitude, longitude: userLocation.longitude, zoom: 15.0)
-//        
-//        mapView = GMSMapView(frame: .zero, camera: camera)
-//        mapView.settings.myLocationButton = true
-//        mapView.settings.scrollGestures = true
-//        mapView.settings.zoomGestures = true
-//        mapView.delegate = self
-//        placesClient = GMSPlacesClient.shared()
-//        
-//        //검색 진행후 view 초기화
-//        self.view = mapView
-//    }
     
     override func viewDidLoad() {
         print(#function)
@@ -48,13 +26,14 @@ class MainViewController: UIViewController{
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization() // 위치 권한 요청
         locationManager.startUpdatingLocation()
+        locationManager.distanceFilter = 100
     }
     
     private func settingMapView() {
         print(#function)
-        let camera = GMSCameraPosition.camera(withLatitude: userLocation.latitude, longitude: userLocation.longitude, zoom: 15.0)
-        
-        mapView = GMSMapView(frame: .zero, camera: camera)
+        let options = GMSMapViewOptions()
+        options.camera = GMSCameraPosition.camera(withLatitude: userLocation.latitude, longitude: userLocation.longitude, zoom: 15.0)
+        mapView = GMSMapView(options:options)
         mapView.settings.myLocationButton = true
         mapView.settings.scrollGestures = true
         mapView.settings.zoomGestures = true
@@ -68,18 +47,20 @@ class MainViewController: UIViewController{
     
     func parkSearch(userLocation: CLLocationCoordinate2D) {
         print(#function)
-        let myProperties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.placeID].map {$0.rawValue}
-        let request = GMSPlaceSearchByTextRequest(textQuery:"park in seoul", placeProperties:myProperties)
-        request.includedType = "park"
-        request.maxResultCount = 50
-        request.rankPreference = .distance
-        request.isStrictTypeFiltering = true
-        request.locationBias =  GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(userLocation.latitude, userLocation.longitude), 1500.0)
+        print("__DDDDD")
+        print(userLocation)
+        
+        let circularLocationRestriction = GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(userLocation.latitude, userLocation.longitude), 3000.0)
+        let placeProperties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.placeID].map {$0.rawValue}
+        
+        let request = GMSPlaceSearchNearbyRequest(locationRestriction: circularLocationRestriction, placeProperties: placeProperties)
+        let includedTypes = ["park"]
+        request.includedTypes = includedTypes
         
         // Array to hold the places in the response
         var placeResults: [GMSPlace] = []
         
-        let callback: GMSPlaceSearchByTextResultCallback = { [weak self] results, error in
+        let callback: GMSPlaceSearchNearbyResultCallback = { [weak self] results, error in
             guard let self, error == nil else {
                 if let error {
                     print("검색 에러 : \(error.localizedDescription)")
@@ -87,7 +68,7 @@ class MainViewController: UIViewController{
                 }
                 return
             }
-            guard let results = results as? [GMSPlace] else {
+            guard let results = results else {
                 return
             }
             //검색이 끝난 시점
@@ -102,77 +83,69 @@ class MainViewController: UIViewController{
                 
                 let deleteWhiteSpaceOfParkName = result.name!.filter { $0.isWhitespace == false }
                 SeoulDataManager.shared.fetchParkCongestionData(placeName: deleteWhiteSpaceOfParkName) { parkData in
-                    guard let parkData = parkData?.first else {
-                        DispatchQueue.main.async {
-                            //marker.icon = UIImage(named: "Marker_Default")
-                            //marker.icon = GMSMarker.markerImage(with: Color.congestionNone)
-                        }
-                        return
-                    }
+                    guard let parkData = parkData?.first else { return }
                     
                     DispatchQueue.main.async {
                         switch parkData.placeCongestLV {
                         case "여유":
-                            marker.icon = MarkerImage.markerGreen/*GMSMarker.markerImage(with: Color.congestionRelex)*/
+                            marker.iconView = MarkerImage.markerGreen
                         case "보통":
-                            marker.icon = MarkerImage.markerYellow/*GMSMarker.markerImage(with: Color.congestionNormal)*/
+                            marker.iconView = MarkerImage.markerYellow
                         case "약간 붐빔":
-                            marker.icon = MarkerImage.markerOrange/*GMSMarker.markerImage(with: Color.congestionMiddle)*/
+                            marker.iconView = MarkerImage.markerOrange
                         case "붐빔":
-                            marker.icon = MarkerImage.markerRed/* GMSMarker.markerImage(with: Color.congestionLot)*/
+                            marker.iconView = MarkerImage.markerRed
                         default:
-                            marker.icon = MarkerImage.markerDefault/*GMSMarker.markerImage(with:  Color.congestionNone)*/
+                            marker.iconView = MarkerImage.markerDefault
                         }
                     }
                 }
-                //marker.icon = GMSMarker.markerImage(with: Color.congestionNone)
-                marker.icon = MarkerImage.markerDefault
+                marker.iconView = MarkerImage.markerDefault
                 marker.title = result.name!
                 marker.map = self.mapView
                 marker.userData = result.placeID
             }
         }
-        
-        GMSPlacesClient.shared().searchByText(with: request, callback: callback)
+        GMSPlacesClient.shared().searchNearby(with: request, callback: callback)
     }
     
     func fetchPlaceImage(placeID: String, completion: @escaping (UIImage) -> ()) {
+        print(#function)
+        let myProperties = [GMSPlaceProperty.name, GMSPlaceProperty.website].map {$0.rawValue}
+        print("myProperties : \(myProperties)")
+        let fetchPlaceRequest = GMSFetchPlaceRequest(placeID: placeID, placeProperties: myProperties, sessionToken: nil)
+        print("fetchPlaceRequest \(fetchPlaceRequest)")
         
-        // Specify the place data types to return (in this case, just photos).
-        let fields: GMSPlaceField = GMSPlaceField(rawValue: UInt64(UInt(GMSPlaceField.photos.rawValue)))
-        
-        placesClient.fetchPlace(fromPlaceID: placeID,
-                                placeFields: fields,
-                                sessionToken: nil, callback: {
-            (place: GMSPlace?, error: Error?) in
+        placesClient.lookUpPhotos(forPlaceID: placeID) { (photos, error) in
             if let error = error {
                 print("An error occurred: \(error.localizedDescription)")
                 return
             }
-            if let place = place {
-                // Get the metadata for the first photo in the place photo metadata list.
-                let photoMetadata: GMSPlacePhotoMetadata = place.photos![0]
-                
-                // Call loadPlacePhoto to display the bitmap and attribution.
-                self.placesClient.loadPlacePhoto(photoMetadata, callback: { (photo, error) -> Void in
-                    if let error = error {
-                        // TODO: Handle the error.
-                        print("Error loading photo metadata: \(error.localizedDescription)")
-                        return
-                    } else {
-                        // Display the first image and its attributions.
-                        guard let image = photo else {return}
-                        completion(image)
-                    }
-                })
-            }
-        })
+            var photoMetadataArray: GMSPlacePhotoMetadata!
+            //사진 데이터가 없는 경우
+            if photos?.results.isEmpty == true {
+                completion(UIImage(named: "공원 기본 이미지.png")!)
+                return }
+            photoMetadataArray = photos?.results[0]
+            
+            self.placesClient.loadPlacePhoto(photoMetadataArray, callback: { (photo, error) -> Void in
+                if let error = error {
+                    // TODO: Handle the error.
+                    print("Error loading photo metadata: \(error.localizedDescription)")
+                    return
+                } else {
+                    // Display the first image and its attributions.
+                    guard let image = photo else {return}
+                    completion(image)
+                }
+            })
+            
+            
+        }
     }
     private func sheetSetting() {
         if let sheet = sheetVC.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
-            //시트 상단바 표시 옵션
-            sheet.prefersGrabberVisible = true
         }
         present(sheetVC, animated: true)
     }
@@ -192,7 +165,6 @@ extension MainViewController: GMSMapViewDelegate {
         if let title = marker.title {
             sheetVC.getParkData(parkName: title, location: marker.position)
             //기본 이미지 셋팅 (로딩 이미지)
-            sheetVC.getParkImage(parkImage: UIImage(systemName: "tree.fill")!)
             sheetVC.updateParkFacilities(parkName: title)
             print("marker title: \(title)")
         }
@@ -216,30 +188,20 @@ extension MainViewController: GMSMapViewDelegate {
         return true
     }
     
-    //사용자가 서울시에서 벗어난 경우
-    func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
-        if !seoulBounds.contains(position.target) {
-            let update = GMSCameraUpdate.setTarget(userLocation, zoom: 15.0)
-            mapView.animate(with: update)
-            print("서울에서 벗어남")
-        }
-        print("서울 내부임")
-    }
-    
 }
 
 extension MainViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
         print(#function)
+        print(error.localizedDescription)
     }
     //인증 상태 확인 메서드
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
             //위치 정보가 활성화 된경우
         case .authorizedWhenInUse:
-            settingMapView()
-            enableLocationFeatures()
+            enableLocationFeatures(currentUserLoacation: manager.location)
             break
             
             //위치 정보가 비활성화를 선택한 경우
@@ -255,25 +217,51 @@ extension MainViewController: CLLocationManagerDelegate {
             break
         }
     }
+    
+    //유저 위치가 100미터 단위로 이동시 호출
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         print(#function)
-        print("유저 현재 위치가져오기 성공")
-        let update = GMSCameraUpdate.setTarget(userLocation, zoom: 15.0)
-        mapView.animate(with: update)
-        locations.forEach {
-            userLocation.latitude = $0.coordinate.latitude
-            userLocation.longitude = $0.coordinate.longitude
-        }
+        print("유저 위치가 이동됨 : \(locations[0])")
+        mapView.clear()
+        parkSearch(userLocation: locations[0].coordinate)
+        
+    }
+    private func enableLocationFeatures(currentUserLoacation: CLLocation?) {
+        print("위치 정보 활성화, 맵 셋팅")
+        guard let currentUserLoacation = currentUserLoacation else { return }
+        userLocation.latitude = currentUserLoacation.coordinate.latitude
+        userLocation.longitude = currentUserLoacation.coordinate.longitude
+        parkSearch(userLocation: currentUserLoacation.coordinate)
         settingMapView()
-        parkSearch(userLocation: userLocation)
+        
     }
     
-    func enableLocationFeatures() {
-        print("위치 정보 활성화, 앱 실행")
-    }
-    
-    func disableLocationFeatures() {
+    //TODO: 위치서비스가 비활성화 된 경우 위치 서비스 설정 화면으로 이동 시키기
+    private func disableLocationFeatures() {
         print("위치 정보 비활성화, 앱 종료")
+        
+        let alert =  UIAlertController(title: "위치 서비스가 비활성화 상태에요!", message: "위치서비스를 허용 시켜주세요!", preferredStyle: .alert)
+        let alertOKAction = UIAlertAction(title: "확인", style: .default) { _ in
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+        }
+        let alertCancelAction = UIAlertAction(title: "취소", style: .destructive)
+        
+        alert.addAction(alertOKAction)
+        alert.addAction(alertCancelAction)
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    //유저 위치가 서울이 아닌 경우
+    private func userNotInSeoul() {
+        let alert =  UIAlertController(title: "서울이 아니시군요!", message: "현재는 서울만 서비스가 가능해요.😢", preferredStyle: .alert)
+        let alertAction = UIAlertAction(title: "확인", style: .default)
+        
+        alert.addAction(alertAction)
+        self.present(alert, animated: true, completion: nil)
     }
 }
 

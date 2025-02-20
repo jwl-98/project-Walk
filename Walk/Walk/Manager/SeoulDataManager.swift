@@ -167,7 +167,6 @@ extension SeoulDataManager {
                     }
                     
                     let eventLocation = CLLocation(latitude: eventLat, longitude: eventLong)
-                    let distance = eventLocation.distance(from: parkLocationObj)
                     
                     if containsKeyword {
                         print("이벤트: \(event.title)")

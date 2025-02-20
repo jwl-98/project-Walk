@@ -18,7 +18,6 @@ class SheetViewController: UIViewController {
     weak var parkDataSource: ParkLocationDataSource?
     let sheetView = SheetView()
     let toiletView = ToiletView()
-    //var facilityItems: [(title: String, content: String)] = []
     
     override func loadView() {
         view = sheetView
@@ -97,6 +96,7 @@ class SheetViewController: UIViewController {
                     self.sheetView.congestionLable.text = "혼잡도 정보가 없어요😢"
                     self.sheetView.congestionLable.backgroundColor = .white
                 }
+                //디버깅용
                 print(self.congestionLableText)
                 return
             }
@@ -131,8 +131,9 @@ class SheetViewController: UIViewController {
     }
     
     func getParkImage(parkImage: UIImage) {
-        
-        sheetView.parkImageView.image = parkImage
+        DispatchQueue.main.async {
+            self.sheetView.parkImageView.image = parkImage
+        }
     }
     
     //거리 계산후 예정시간 표시 해주는 함수
@@ -192,7 +193,7 @@ extension SheetViewController: UICollectionViewDelegate, UICollectionViewDataSou
         //        let width = collectionView.bounds.width
         //        print(width)
         
-        return CGSize(width: width, height: 260)
+        return CGSize(width: width, height: 380)
     }
 }
 
@@ -222,17 +223,6 @@ extension SheetViewController: UITableViewDelegate, UITableViewDataSource {
             if !parkInfo.mainEquip.isEmpty {
                 self.facilityItems.append(("주요 시설", parkInfo.mainEquip))
             }
-            //
-            //            // 주요 식물
-            //            if !parkInfo.mainPlants.isEmpty {
-            //                self.facilityItems.append(("주요 식물", parkInfo.mainPlants))
-            //            }
-            //
-            //            // 이용 안내
-            //            if !parkInfo.guidance.isEmpty {
-            //                self.facilityItems.append(("이용 안내", parkInfo.guidance))
-            //            }
-            
             DispatchQueue.main.async {
                 self.sheetView.facilitiesTableView.reloadData()
             }

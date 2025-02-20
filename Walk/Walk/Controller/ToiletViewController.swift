@@ -41,19 +41,17 @@ class ToiletViewController: UIViewController, GMSMapViewDelegate {
     private func setupMapView() {
         
         guard let parkLocation = parkLocation else {return}
-        let camera = GMSCameraPosition.camera(withLatitude: parkLocation.parkLocation.latitude, longitude: parkLocation.parkLocation.longitude , zoom: 17.0)
-        mapView = GMSMapView(frame: .zero, camera: camera)
+        let options = GMSMapViewOptions()
+        options.camera = GMSCameraPosition.camera(withLatitude: parkLocation.parkLocation.latitude, longitude: parkLocation.parkLocation.longitude , zoom: 17.0)
+        
+        mapView = GMSMapView(options:options)
         mapView.settings.scrollGestures = true
         mapView.settings.zoomGestures = true
         mapView.delegate = self
         placesClient = GMSPlacesClient.shared()
-      
-        let parkMarker = GMSMarker(position: parkLocation.parkLocation)
-               parkMarker.title = parkLocation.parkName
-               parkMarker.icon = GMSMarker.markerImage(with: .green)  // 공원 마커는 녹색으로
-               parkMarker.map = mapView
+        mapView.isMyLocationEnabled = true
     }
-        
+    
     //네비게이션 바 설정
     private func setupNavBar() {
         guard let parkLocation = parkLocation else { return }
@@ -88,13 +86,13 @@ class ToiletViewController: UIViewController, GMSMapViewDelegate {
             return distance <= 2000
         }
         for toilet in nearByToilet {
-               let marker = GMSMarker()
-               marker.position = CLLocationCoordinate2D(latitude: toilet.toiletLat, longitude: toilet.toiletLong)
-               marker.title = toilet.toiletName
-               marker.snippet = "공중화장실"
-            marker.icon = UIImage(named: "Marker_화장실")
-               marker.map = mapView
-           }
+            let marker = GMSMarker()
+            marker.position = CLLocationCoordinate2D(latitude: toilet.toiletLat, longitude: toilet.toiletLong)
+            marker.title = toilet.toiletName
+            marker.snippet = "공중화장실"
+            marker.iconView = MarkerImage.MarkerToilet
+            marker.map = mapView
+        }
     }
     
     @objc
@@ -102,7 +100,7 @@ class ToiletViewController: UIViewController, GMSMapViewDelegate {
         dismiss(animated: true)
         print("뒤로가기 버튼 눌림")
     }
-
+    
     private func configureUI() {
         view.backgroundColor = .white
         view.addSubview(mapView)
@@ -113,5 +111,5 @@ class ToiletViewController: UIViewController, GMSMapViewDelegate {
             $0.bottom.equalToSuperview()
         }
     }
-
+    
 }

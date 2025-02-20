@@ -8,13 +8,20 @@ import SnapKit
 
 class SheetView: UIView {
     
+    
+    private let sheetGrabber: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = DesignComponents.sheetGrabber
+        
+        return imageView
+        
+    }()
     //MARK: 공원대표 사진, 이름 등 메인 탭
     private lazy var mainView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
         view.clipsToBounds = true
         view.layer.cornerRadius = CornerRadius.normal
-        
         view.addSubview(parkImageView)
         view.addSubview(congestionLable)
         view.addSubview(parkNameLable)
@@ -37,13 +44,14 @@ class SheetView: UIView {
         let label = UILabel()
         label.text = "내 위치에서 N분 소요될 예정이에요!"
         label.adjustsFontSizeToFitWidth = true
-        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         
         return label
     }()
     //공원 이미지
     let parkImageView: UIImageView = {
         var image = UIImageView()
+        image.image = UIImage(named: "공원 기본 이미지.png")
         image.clipsToBounds = true
         image.layer.cornerRadius = CornerRadius.normal
         
@@ -134,7 +142,6 @@ class SheetView: UIView {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 10
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0) // 여백을 0으로 설정
         layout.minimumInteritemSpacing = 10
 
         
@@ -207,6 +214,7 @@ class SheetView: UIView {
     // 시설 정보 테이블 뷰 추가
     let facilitiesTableView: UITableView = {
         let tableView = UITableView()
+        tableView.backgroundColor = .green
         tableView.register(FacilityCell.self, forCellReuseIdentifier: "FacilityCell")
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
@@ -249,11 +257,18 @@ class SheetView: UIView {
     }
         private func topLabelConfigureUI() {
         self.addSubview(leftTimeLabel)
+            self.addSubview(sheetGrabber)
         
         leftTimeLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(Pedding.normal)
+            $0.top.equalToSuperview().offset(40)
         }
+            sheetGrabber.snp.makeConstraints {
+                $0.centerX.equalToSuperview()
+                $0.width.equalTo(41)
+                $0.height.equalTo(6)
+                $0.bottom.equalTo(leftTimeLabel.snp.top).offset(-20)
+            }
     }
     private func scrollViewConfigureUI() {
         self.addSubview(scrollView)
@@ -272,7 +287,10 @@ class SheetView: UIView {
             $0.top.equalTo(scrollView.contentLayoutGuide)
             $0.height.equalTo(182)
             $0.width.equalTo(368)
-            $0.leading.trailing.equalTo(scrollView.contentLayoutGuide).offset(Pedding.normal)
+            $0.centerX.equalToSuperview()
+//           $0.leading.equalTo(scrollView.contentLayoutGuide).offset(Pedding.normal)
+//            $0.trailing.equalToSuperview()
+ 
 //            $0.leading.equalToSuperview().offset(Fedding.normal)
 //            $0.trailing.equalToSuperview().inset(Fedding.normal)
         }

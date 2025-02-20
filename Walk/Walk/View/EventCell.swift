@@ -36,7 +36,6 @@ class EventCell: UICollectionViewCell {
         label.textAlignment = .center
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 16, weight: .bold)
-        label.numberOfLines = 0
         return label
     }()
     
@@ -45,6 +44,7 @@ class EventCell: UICollectionViewCell {
         let label = UILabel()
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 14)
+        label.numberOfLines = 0
         label.textColor = .systemGray
         return label
     }()
@@ -64,6 +64,7 @@ class EventCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+       // backgroundColor = .red
         setupUI()
     }
     
