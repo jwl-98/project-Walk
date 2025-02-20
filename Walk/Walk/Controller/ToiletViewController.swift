@@ -41,17 +41,14 @@ class ToiletViewController: UIViewController, GMSMapViewDelegate {
     private func setupMapView() {
         
         guard let parkLocation = parkLocation else {return}
-        let camera = GMSCameraPosition.camera(withLatitude: parkLocation.parkLocation.latitude, longitude: parkLocation.parkLocation.longitude , zoom: 17.0)
-        mapView = GMSMapView(frame: .zero, camera: camera)
+        let options = GMSMapViewOptions()
+        options.camera = GMSCameraPosition.camera(withLatitude: parkLocation.parkLocation.latitude, longitude: parkLocation.parkLocation.longitude , zoom: 17.0)
+        
+        mapView = GMSMapView(options:options)
         mapView.settings.scrollGestures = true
         mapView.settings.zoomGestures = true
         mapView.delegate = self
         placesClient = GMSPlacesClient.shared()
-        
-//        let parkMarker = GMSMarker(position: parkLocation.parkLocation)
-//        parkMarker.title = parkLocation.parkName
-//        //parkMarker.icon = GMSMarker.markerImage(with: .green)  // 공원 마커는 녹색으로
-//        parkMarker.map = mapView
         mapView.isMyLocationEnabled = true
     }
     
@@ -94,7 +91,6 @@ class ToiletViewController: UIViewController, GMSMapViewDelegate {
             marker.title = toilet.toiletName
             marker.snippet = "공중화장실"
             marker.iconView = MarkerImage.MarkerToilet
-//            marker.icon = UIImage(named: "Marker_화장실")
             marker.map = mapView
         }
     }

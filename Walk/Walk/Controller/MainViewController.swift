@@ -18,26 +18,6 @@ class MainViewController: UIViewController{
     private let sheetVC = SheetViewController()
     private var userLocation = CLLocationCoordinate2D(latitude:  0.0, longitude: 0.0)
     private var parkData: ParkLocation?
-//    private let seoulBounds = GMSCoordinateBounds(
-//        coordinate: CLLocationCoordinate2D(latitude: 37.7019, longitude: 126.7341), // 북서쪽
-//        coordinate: CLLocationCoordinate2D(latitude: 37.4283, longitude: 127.1836)  // 남동쪽
-//    )
-    
-    //    override func loadView() {
-    //        print(#function)
-    //        //GMSMapView 인스턴스에서 발생하는 사용자 상호작용의 이벤트를 처리
-    //        let camera = GMSCameraPosition.camera(withLatitude: userLocation.latitude, longitude: userLocation.longitude, zoom: 15.0)
-    //
-    //        mapView = GMSMapView(frame: .zero, camera: camera)
-    //        mapView.settings.myLocationButton = true
-    //        mapView.settings.scrollGestures = true
-    //        mapView.settings.zoomGestures = true
-    //        mapView.delegate = self
-    //        placesClient = GMSPlacesClient.shared()
-    //
-    //        //검색 진행후 view 초기화
-    //        self.view = mapView
-    //    }
     
     override func viewDidLoad() {
         print(#function)
@@ -50,9 +30,9 @@ class MainViewController: UIViewController{
     
     private func settingMapView() {
         print(#function)
-        let camera = GMSCameraPosition.camera(withLatitude: userLocation.latitude, longitude: userLocation.longitude, zoom: 15.0)
-        
-        mapView = GMSMapView(frame: .zero, camera: camera)
+        let options = GMSMapViewOptions()
+        options.camera = GMSCameraPosition.camera(withLatitude: userLocation.latitude, longitude: userLocation.longitude, zoom: 15.0)
+        mapView = GMSMapView(options:options)
         mapView.settings.myLocationButton = true
         mapView.settings.scrollGestures = true
         mapView.settings.zoomGestures = true
@@ -68,17 +48,9 @@ class MainViewController: UIViewController{
         print(#function)
         print("__DDDDD")
         print(userLocation)
-        let myProperties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.placeID].map {$0.rawValue}
-//        let request = GMSPlaceSearchByTextRequest(textQuery:"park in seoul", placeProperties:myProperties)
-//        request.includedType = "park"
-//        request.maxResultCount = 20
-//        request.rankPreference = .distance
-//        request.isStrictTypeFiltering = true
-//        request.locationBias =  GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(userLocation.latitude, userLocation.longitude), 1500.0)
         
         let circularLocationRestriction = GMSPlaceCircularLocationOption(CLLocationCoordinate2DMake(userLocation.latitude, userLocation.longitude), 3000.0)
         let placeProperties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.placeID].map {$0.rawValue}
-
         
         let request = GMSPlaceSearchNearbyRequest(locationRestriction: circularLocationRestriction, placeProperties: placeProperties)
         let includedTypes = ["park"]
@@ -110,83 +82,67 @@ class MainViewController: UIViewController{
                 
                 let deleteWhiteSpaceOfParkName = result.name!.filter { $0.isWhitespace == false }
                 SeoulDataManager.shared.fetchParkCongestionData(placeName: deleteWhiteSpaceOfParkName) { parkData in
-                    guard let parkData = parkData?.first else {
-                        DispatchQueue.main.async {
-                            //marker.icon = UIImage(named: "Marker_Default")
-                            //marker.icon = GMSMarker.markerImage(with: Color.congestionNone)
-                        }
-                        return
-                    }
+                    guard let parkData = parkData?.first else { return }
                     
                     DispatchQueue.main.async {
                         switch parkData.placeCongestLV {
                         case "여유":
-                            marker.iconView = MarkerImage.markerGreen/*GMSMarker.markerImage(with: Color.congestionRelex)*/
+                            marker.iconView = MarkerImage.markerGreen
                         case "보통":
-                            marker.iconView = MarkerImage.markerYellow/*GMSMarker.markerImage(with: Color.congestionNormal)*/
+                            marker.iconView = MarkerImage.markerYellow
                         case "약간 붐빔":
-                            marker.iconView = MarkerImage.markerOrange/*GMSMarker.markerImage(with: Color.congestionMiddle)*/
+                            marker.iconView = MarkerImage.markerOrange
                         case "붐빔":
-                            marker.iconView = MarkerImage.markerRed/* GMSMarker.markerImage(with: Color.congestionLot)*/
+                            marker.iconView = MarkerImage.markerRed
                         default:
-                            marker.iconView = MarkerImage.markerDefault/*GMSMarker.markerImage(with:  Color.congestionNone)*/
+                            marker.iconView = MarkerImage.markerDefault
                         }
                     }
                 }
-                //marker.icon = GMSMarker.markerImage(with: Color.congestionNone)
-                //marker.icon = MarkerImage.markerDefault
                 marker.iconView = MarkerImage.markerDefault
                 marker.title = result.name!
                 marker.map = self.mapView
                 marker.userData = result.placeID
             }
         }
-        
-//        GMSPlacesClient.shared().searchByText(with: request, callback: callback)
         GMSPlacesClient.shared().searchNearby(with: request, callback: callback)
     }
     
     func fetchPlaceImage(placeID: String, completion: @escaping (UIImage) -> ()) {
+        print(#function)
+        let myProperties = [GMSPlaceProperty.name, GMSPlaceProperty.website].map {$0.rawValue}
+        print("myProperties : \(myProperties)")
+        let fetchPlaceRequest = GMSFetchPlaceRequest(placeID: placeID, placeProperties: myProperties, sessionToken: nil)
+        print("fetchPlaceRequest \(fetchPlaceRequest)")
         
-        // Specify the place data types to return (in this case, just photos).
-        let fields: GMSPlaceField = GMSPlaceField(rawValue: UInt64(UInt(GMSPlaceField.photos.rawValue)))
-        
-        placesClient.fetchPlace(fromPlaceID: placeID,
-                                placeFields: fields,
-                                sessionToken: nil, callback: {
-            (place: GMSPlace?, error: Error?) in
+        placesClient.lookUpPhotos(forPlaceID: placeID) { (photos, error) in
             if let error = error {
                 print("An error occurred: \(error.localizedDescription)")
                 return
             }
-            //사진 데이터가 없는 경우 처리??
-            if let place = place {
-                // Get the metadata for the first photo in the place photo metadata list.
-                var photoMetadataArray: GMSPlacePhotoMetadata!
-                guard let photoMetadata = place.photos else { return }
-                photoMetadataArray = photoMetadata[0]
-//                let photoMetadata: GMSPlacePhotoMetadata = place.photos![0]
-                
-                // Call loadPlacePhoto to display the bitmap and attribution.
-                self.placesClient.loadPlacePhoto(photoMetadataArray, callback: { (photo, error) -> Void in
-                    if let error = error {
-                        // TODO: Handle the error.
-                        print("Error loading photo metadata: \(error.localizedDescription)")
-                        return
-                    } else {
-                        // Display the first image and its attributions.
-                        guard let image = photo else {return}
-                        completion(image)
-                    }
-                })
-            }
-        })
+            var photoMetadataArray: GMSPlacePhotoMetadata!
+            //사진 데이터가 없는 경우
+            if photos?.results.isEmpty == true { return }
+            photoMetadataArray = photos?.results[0]
+            
+            self.placesClient.loadPlacePhoto(photoMetadataArray, callback: { (photo, error) -> Void in
+                if let error = error {
+                    // TODO: Handle the error.
+                    print("Error loading photo metadata: \(error.localizedDescription)")
+                    return
+                } else {
+                    // Display the first image and its attributions.
+                    guard let image = photo else {return}
+                    completion(image)
+                }
+            })
+            
+            
+        }
     }
     private func sheetSetting() {
         if let sheet = sheetVC.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
-            //시트 상단바 표시 옵션
-            //sheet.prefersGrabberVisible = true
         }
         present(sheetVC, animated: true)
     }
@@ -206,7 +162,7 @@ extension MainViewController: GMSMapViewDelegate {
         if let title = marker.title {
             sheetVC.getParkData(parkName: title, location: marker.position)
             //기본 이미지 셋팅 (로딩 이미지)
-            sheetVC.getParkImage(parkImage: UIImage(named: "공원 기본 이미지.png")!)
+            //sheetVC.getParkImage(parkImage: UIImage(named: "공원 기본 이미지.png")!)
             sheetVC.updateParkFacilities(parkName: title)
             print("marker title: \(title)")
         }
@@ -232,12 +188,10 @@ extension MainViewController: GMSMapViewDelegate {
     
     //사용자가 서울시에서 벗어난 경우 - if the User out Of Seoul
     func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
-//        if !seoulBounds.contains(position.target) {
-//            let update = GMSCameraUpdate.setTarget(userLocation, zoom: 15.0)
-//            mapView.animate(with: update)
-//            print("서울에서 벗어남")
-//        }
-//        print("서울 내부임")
+        print(#function)
+        print("맵 카메라 변경됨")
+        print(position.target)
+        //parkSearch(userLocation: position.target)
     }
     
 }

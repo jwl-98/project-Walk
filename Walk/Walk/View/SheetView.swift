@@ -51,6 +51,7 @@ class SheetView: UIView {
     //공원 이미지
     let parkImageView: UIImageView = {
         var image = UIImageView()
+        image.image = UIImage(named: "공원 기본 이미지.png")
         image.clipsToBounds = true
         image.layer.cornerRadius = CornerRadius.normal
         
