@@ -19,6 +19,7 @@ public enum Color {
     static let congestionMiddle = UIColor(hexCode: "FF8041") //약간붐빔
     static let congestionLot = UIColor(hexCode: "DD1E3D") //혼잡
     static let popViewBackground = UIColor(hexCode: "E7F0DC")
+    static let congestionBackground = UIColor(hexCode: "80AF81")
 }
 
 public enum MarkerImage {
@@ -106,7 +107,33 @@ public enum DesignComponents {
         return resizeImage
     }()
     
+    static let listTabCongestionDefault: UIImage = {
+        let image = UIImage(named: "리스트_여유")!
+        let resizeImage =  image.resize(image: image, targetSize: CGSize(width: 24, height: 24))
+        
+        return resizeImage
+    }()
     
+    static let listTabCongestionNormal: UIImage = {
+        let image = UIImage(named: "리스트_보통")!
+        let resizeImage =  image.resize(image: image, targetSize: CGSize(width: 24, height: 24))
+        
+        return resizeImage
+    }()
+    
+    static let listTabCongestionOrange: UIImage = {
+        let image = UIImage(named: "리스트_약간혼잡")!
+        let resizeImage =  image.resize(image: image, targetSize: CGSize(width: 24, height: 24))
+        
+        return resizeImage
+    }()
+    
+    static let listTabCongestionRed: UIImage = {
+        let image = UIImage(named: "리스트_혼잡")!
+        let resizeImage =  image.resize(image: image, targetSize: CGSize(width: 24, height: 24))
+        
+        return resizeImage
+    }()
 }
 public enum Pedding {
     static let normal: CGFloat = 20

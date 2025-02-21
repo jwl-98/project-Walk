@@ -8,10 +8,10 @@
 import UIKit
 
 class ListViewController: UIViewController {
-    let listView = ListView()
+    let listView = CongestionListCell()
     
     override func loadView() {
-        view = listView
+        view = listView.contentView
     }
     override func viewDidLoad() {
         super.viewDidLoad()
