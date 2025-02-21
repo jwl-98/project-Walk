@@ -1,11 +1,11 @@
 {
   "images" : [
     {
+      "filename" : "리스트탭바_기본.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "parkImageDummy.jpg",
       "idiom" : "universal",
       "scale" : "2x"
     },

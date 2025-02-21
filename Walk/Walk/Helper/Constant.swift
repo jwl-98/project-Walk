@@ -74,8 +74,39 @@ public enum MarkerImage {
     }()
 }
 
+
 public enum DesignComponents {
     static let sheetGrabber = UIImage(named: "SheetGrabber")
+    
+    static let mainTabBarDefault: UIImage = {
+        let image = UIImage(named: "탭바메인_기본")!
+        let resizeImage =  image.resize(image: image, targetSize: CGSize(width: 28, height: 28))
+        
+        return resizeImage
+    }()
+    
+    static let mainTabBarTapped: UIImage = {
+        let image = UIImage(named: "탭바메인_클릭")!
+        let resizeImage =  image.resize(image: image, targetSize: CGSize(width: 28, height: 28))
+        
+        return resizeImage
+    }()
+    
+    static let listTabBarDefault: UIImage = {
+        let image = UIImage(named: "리스트탭바_기본")!
+        let resizeImage =  image.resize(image: image, targetSize: CGSize(width: 28, height: 28))
+        
+        return resizeImage
+    }()
+    
+    static let listTabBarTapped: UIImage = {
+        let image = UIImage(named: "리스트탭바_클릭")!
+        let resizeImage =  image.resize(image: image, targetSize: CGSize(width: 28, height: 28))
+        
+        return resizeImage
+    }()
+    
+    
 }
 public enum Pedding {
     static let normal: CGFloat = 20
@@ -86,8 +117,14 @@ public enum CornerRadius {
     static let normal: CGFloat = 8
 }
 
-
-
+extension UIImage {
+    func resize(image: UIImage, targetSize: CGSize) -> UIImage {
+        let render = UIGraphicsImageRenderer(size: targetSize)
+        return render.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
+    }
+}
 
 extension UIColor {
     
