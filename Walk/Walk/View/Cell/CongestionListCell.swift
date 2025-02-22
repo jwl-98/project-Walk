@@ -98,9 +98,3 @@ class CongestionListCell: UITableViewCell {
     
 }
 
-
-@available(iOS 17.0, *)
-#Preview {
-    CheckViewController()
-}
-
