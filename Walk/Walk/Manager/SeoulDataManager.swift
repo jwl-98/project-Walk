@@ -14,7 +14,7 @@ struct SeoulDataManager {
     let seoulOpenApiKeys = Bundle.main.infoDictionary?["SEOUL_OPEN_API_KEY"] as! String
     
     func fetchParkCongestionData(placeName: String, completion: @escaping ([ParkCongestionDataModel]?) -> Void) {
-        let parkCongestionURL = "http://openapi.seoul.go.kr:8088/\(seoulOpenApiKeys)/json/citydata_ppltn/1/100/"
+        let parkCongestionURL = "http://openapi.seoul.go.kr:8088/\(seoulOpenApiKeys)/json/citydata_ppltn/1/1/"
         let urlString = "\(parkCongestionURL)\(placeName)"
         print("띄어쓰기 사라진 공원 이름: \(placeName)")
         performRequestParkCongestionData(with: urlString) { congestionData in

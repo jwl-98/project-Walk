@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		362AD3A49ED4A6289207A367 /* Pods_Walk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 079897EDD98A021027ED60AC /* Pods_Walk.framework */; };
-		E21A86FD2D572CC3009C9C89 /* APIKEY.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = E21A86FC2D572CC3009C9C89 /* APIKEY.xcconfig */; };
-		E22CDF492D62059500379418 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = E22CDF482D62059500379418 /* SnapKit */; };
 		E29D20522D51E725007E21FA /* 서울시공중화장실정보.json in Resources */ = {isa = PBXBuildFile; fileRef = E29D20512D51E725007E21FA /* 서울시공중화장실정보.json */; };
+		E2E0D7642D6980EF008ABEF7 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E2E0D7632D6980EF008ABEF7 /* Kingfisher */; };
+		E2E0D7672D69811C008ABEF7 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = E2E0D7662D69811C008ABEF7 /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,8 +48,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E2E0D7672D69811C008ABEF7 /* SnapKit in Frameworks */,
+				E2E0D7642D6980EF008ABEF7 /* Kingfisher in Frameworks */,
 				362AD3A49ED4A6289207A367 /* Pods_Walk.framework in Frameworks */,
-				E22CDF492D62059500379418 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,7 +116,8 @@
 			);
 			name = Walk;
 			packageProductDependencies = (
-				E22CDF482D62059500379418 /* SnapKit */,
+				E2E0D7632D6980EF008ABEF7 /* Kingfisher */,
+				E2E0D7662D69811C008ABEF7 /* SnapKit */,
 			);
 			productName = Walk;
 			productReference = E289CE082D3B7F0900134D78 /* Walk.app */;
@@ -147,7 +149,8 @@
 			mainGroup = E289CDFF2D3B7F0900134D78;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				E22CDF472D62059500379418 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				E2E0D7622D6980BD008ABEF7 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				E2E0D7652D69811C008ABEF7 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E289CE092D3B7F0900134D78 /* Products */;
@@ -165,7 +168,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E29D20522D51E725007E21FA /* 서울시공중화장실정보.json in Resources */,
-				E21A86FD2D572CC3009C9C89 /* APIKEY.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,7 +442,15 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E22CDF472D62059500379418 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+		E2E0D7622D6980BD008ABEF7 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.2.0;
+			};
+		};
+		E2E0D7652D69811C008ABEF7 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
 			requirement = {
@@ -451,9 +461,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E22CDF482D62059500379418 /* SnapKit */ = {
+		E2E0D7632D6980EF008ABEF7 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E22CDF472D62059500379418 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			package = E2E0D7622D6980BD008ABEF7 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		E2E0D7662D69811C008ABEF7 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E2E0D7652D69811C008ABEF7 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */

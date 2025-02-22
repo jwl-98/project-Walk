@@ -10,42 +10,32 @@ import SnapKit
 
 class CongestionListCell: UITableViewCell {
     
-    let parkImageView: UIImageView = {
-       let imageView = UIImageView()
+    lazy var parkImageView: UIImageView = {
+        let imageView = UIImageView()
         
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = CornerRadius.normal
-        imageView.backgroundColor = .red
-        
-        return imageView
-    }()
-    
-    let parkCongestionLVImageView: UIImageView = {
-       let imageView = UIImageView()
-        
-        imageView.image = DesignComponents.listTabCongestionDefault
+        imageView.addSubview(parkCongestionView)
         
         return imageView
     }()
     
     lazy var parkCongestionView: UIView = {
         let view = UIView()
-        
         view.backgroundColor = Color.congestionBackground
         view.clipsToBounds = true
         view.layer.cornerRadius = CornerRadius.normal
         view.addSubview(parkCongestionLabel)
-        view.addSubview(parkCongestionLVImageView)
         
         return view
     }()
     
-   let parkCongestionLabel: UILabel = {
-       let label = UILabel()
+    let parkCongestionLabel: UILabel = {
+        let label = UILabel()
         
         label.text = "여유"
         label.textColor = .white
-        label.textAlignment = .right
+        label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .semibold)
         
         return label
@@ -56,16 +46,18 @@ class CongestionListCell: UITableViewCell {
         
         label.font = .systemFont(ofSize: 20, weight: .bold)
         label.text = "공원 이름 이름 이름 이름"
-        label.backgroundColor = .green
         
         return label
     }()
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        parkCongestionView.backgroundColor = Color.congestionBackground
+    }
     
-
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
+        backgroundColor = Color.lightGreen
         configureUI()
     }
     
@@ -74,43 +66,41 @@ class CongestionListCell: UITableViewCell {
     }
     
     private func configureUI() {
-        [parkImageView, parkCongestionView, parkNameLabel].forEach { contentView.addSubview($0) }
+        [parkImageView, parkNameLabel].forEach { contentView.addSubview($0) }
         
         parkImageView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.width.height.equalTo(104)
+            $0.width.equalTo(300)
+            $0.height.equalTo(150)
             $0.leading.equalTo(20)
+            $0.trailing.equalTo(-20)
         }
         
         parkNameLabel.snp.makeConstraints {
-            $0.centerY.equalToSuperview().offset(15)
-            $0.leading.equalTo(parkImageView.snp.trailing).offset(Pedding.normal)
+            $0.top.equalTo(parkImageView.snp.bottom).offset(20)
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalToSuperview().offset(-10)
         }
         
         parkCongestionView.snp.makeConstraints {
-            $0.bottom.equalTo(parkNameLabel.snp.top).offset(-15)
-            $0.leading.equalTo(parkNameLabel.snp.leading)
             $0.width.equalTo(70)
             $0.height.equalTo(30)
+            $0.bottom.equalToSuperview()
         }
         
         parkCongestionLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(5)
-            $0.centerY.equalToSuperview()
-        }
-        
-        parkCongestionLVImageView.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(5)
-            $0.centerY.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.top.equalToSuperview()
+            $0.bottom.equalToSuperview()
         }
         
     }
-
+    
 }
 
 
 @available(iOS 17.0, *)
 #Preview {
-    ListViewController()
+    CheckViewController()
 }
 

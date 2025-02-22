@@ -28,7 +28,7 @@ class PopoverViewController: UIViewController {
     }
     
     private func configure() {
-        view.backgroundColor = Color.popViewBackground
+        view.backgroundColor = Color.lightGreen
         preferredContentSize = .init(width: 200, height: 100)
         modalPresentationStyle = .popover
     }
@@ -40,7 +40,7 @@ class PopoverViewController: UIViewController {
             $0.top.equalToSuperview()
             $0.leading.equalToSuperview().offset(5)
             $0.trailing.equalToSuperview().inset(5)
-            $0.bottom.equalToSuperview().offset(5)
+            $0.bottom.equalToSuperview().offset(-5)
         }
     }
 

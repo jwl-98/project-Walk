@@ -421,7 +421,7 @@ class SheetView: UIView {
         
         congestionInfoButton.snp.makeConstraints {
             $0.centerY.equalTo(congestionLable.snp.centerY)
-            $0.trailing.equalTo(congestionLable.snp.trailing).inset(25)
+            $0.trailing.equalTo(congestionLable.snp.trailing).inset(20)
             $0.width.height.equalTo(24)
         }
     }
