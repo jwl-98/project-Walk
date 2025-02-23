@@ -12,6 +12,7 @@ import Kingfisher
 class ListViewController: UIViewController {
     
     private let tableView = UITableView()
+    private let queue = DispatchQueue(label: "com.yourapp.congestionData")
     
     let parkList: [String] = [
         "강서한강공원",
@@ -58,9 +59,10 @@ class ListViewController: UIViewController {
         super.viewDidLoad()
         print(#function)
         view.backgroundColor = Color.lightGreen
-        for placeName in parkList {
-            setupData(placeName: placeName)
-        }
+//        for placeName in parkList {
+//            setupData(placeName: placeName)
+//        }
+        setupData()
         setupTableView()
         configureUI()
     }
@@ -73,11 +75,34 @@ class ListViewController: UIViewController {
         tableView.register(CongestionListCell.self, forCellReuseIdentifier: "ListCell")
         tableView.backgroundColor = Color.lightGreen
     }
+//    
+//    func setupData(placeName: String) {
+//        SeoulDataManager.shared.fetchParkCongestionData(placeName: placeName) { [weak self] data in
+//            guard let data = data, let self = self else { return }
+//            self.queue.async {
+//                self.congestionDataArray.append(contentsOf: data)
+//            }
+//        }
+//    }
     
-    func setupData(placeName: String) {
-        SeoulDataManager.shared.fetchParkCongestionData(placeName: placeName) { [weak self] data in
-            guard let data = data, let self = self else { return }
-            congestionDataArray.append(contentsOf: data)
+    func setupData() {
+        let group = DispatchGroup()
+        let lock = NSLock()
+        var tempArray: [ParkCongestionDataModel] = []
+        
+        for placeName in parkList {
+            group.enter()
+            SeoulDataManager.shared.fetchParkCongestionData(placeName: placeName) { data in
+                if let data = data {
+                    lock.lock()
+                    tempArray.append(contentsOf: data)
+                    lock.unlock()
+                }
+                group.leave()
+            }
+        }
+        group.notify(queue: .main) { [weak self] in
+            self?.congestionDataArray = tempArray
         }
     }
     
