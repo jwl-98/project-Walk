@@ -41,11 +41,6 @@
 			path = Walk;
 			sourceTree = "<group>";
 		};
-		E2C874812D6AF618001A3617 /* WalkTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WalkTests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,7 +72,6 @@
 				E21A86FC2D572CC3009C9C89 /* APIKEY.xcconfig */,
 				E29D20512D51E725007E21FA /* 서울시공중화장실정보.json */,
 				E289CE0A2D3B7F0900134D78 /* Walk */,
-				E2C874812D6AF618001A3617 /* WalkTests */,
 				E289CE092D3B7F0900134D78 /* Products */,
 				80242EF9A003196904734BC1 /* Pods */,
 				E43F6E452272D354E20B1E75 /* Frameworks */,
