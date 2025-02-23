@@ -59,7 +59,7 @@ class SheetView: UIView {
     }()
     
     //혼잡도 레이블
-    let congestionLable: UILabel = {
+    lazy var congestionLable: UILabel = {
         var label = UILabel()
         label.text = "혼잡도 정보가 없어요😢"
         label.layer.cornerRadius  = CornerRadius.normal
@@ -67,7 +67,8 @@ class SheetView: UIView {
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
-        
+        label.isUserInteractionEnabled = true
+        label.addSubview(congestionInfoButton)
         return label
     }()
     
@@ -417,7 +418,7 @@ class SheetView: UIView {
     }
     
      func infoButtonConfigureUI() {
-        self.addSubview(congestionInfoButton)
+       //self.addSubview(congestionInfoButton)
         
         congestionInfoButton.snp.makeConstraints {
             $0.centerY.equalTo(congestionLable.snp.centerY)
