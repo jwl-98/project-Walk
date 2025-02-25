@@ -1,4 +1,4 @@
-# 🌳 산책가자 (SanchaekGaja) - 공원 혼잡도 확인 앱  
+# 🌳 산책가자 - 공원 혼잡도 확인 앱  
 ![Group 12 오전 1 10 20](https://github.com/user-attachments/assets/05b20fd3-d978-458c-bc7d-3accb516ccd3)
 
 
