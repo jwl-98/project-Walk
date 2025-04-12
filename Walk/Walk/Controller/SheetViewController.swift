@@ -159,6 +159,48 @@ class SheetViewController: UIViewController {
         }
     }
     
+    func updateParkData(parkData: ParkDetailData) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            //공원 이미지 업데이트
+            self.sheetView.parkImageView.image = parkData.image
+            
+            //혼잡도 업데이트
+            if let congestion = parkData.congestion {
+                self.updateCongestionInfo(with: congestion)
+            }
+            
+            if let events = parkData.events {
+                self.events = events
+            }
+            
+            if let facilities = parkData.facilities {
+                self.facilityItems = facilities
+            }
+        }
+    }
+    
+    private func updateCongestionInfo(with data: ParkCongestionDataModel) {
+        //혼잡도 레이블 기본
+        sheetView.congestionInfoButton.isHidden = false
+        
+        switch data.placeCongestLV {
+            case "여유":
+                sheetView.congestionLable.backgroundColor = Color.congestionRelex
+            case "보통":
+                sheetView.congestionLable.backgroundColor = Color.congestionNormal
+            case "약간 붐빔":
+                sheetView.congestionLable.backgroundColor = Color.congestionMiddle
+            case "붐빔":
+                sheetView.congestionLable.backgroundColor = Color.congestionLot
+            default:
+                break
+            }
+        sheetView.congestionLable.text = data.placeCongestLV
+        popVC.congestionMSGLable.text = data.placeCongestMSG
+    }
+    
     //거리 계산후 예정시간 표시 해주는 함수
     // 시간 반올림 필요, 60분 넘을시 0시간 0분 으로 나타내게 하는 작업필요 - 완
     func calculateRoute(origin: CLLocationCoordinate2D, destination: CLLocationCoordinate2D) {

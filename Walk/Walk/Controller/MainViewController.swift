@@ -154,6 +154,15 @@ class MainViewController: UIViewController{
 extension MainViewController: GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
         
+        guard let title = marker.title else { return false }
+        
+        fetchParkDetailData(parkName: title, placeID: marker.userData as? String, location: marker.position) { [weak self] parkData in
+            guard let self = self else { return }
+            
+            
+        }
+        
+        
         print("핀이 눌렸음")
         
         //핀이 눌렸을 경우 sheet 표시
@@ -186,6 +195,19 @@ extension MainViewController: GMSMapViewDelegate {
             }
         }
         return true
+    }
+    private func fetchParkDetailData(
+        parkName: String,
+        placeID: String?,
+        location: CLLocationCoordinate2D,
+        completion: @escaping (ParkDetailData) -> Void
+    ) {
+        let group = DispatchGroup()
+        var parkImage: UIImage?
+        var congestionData: ParkCongestionDataModel?
+        var events: [Row]?
+        var facilities: [(String, String)]?
+        
     }
     
 }

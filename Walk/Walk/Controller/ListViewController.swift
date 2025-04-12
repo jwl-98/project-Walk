@@ -94,9 +94,9 @@ class ListViewController: UIViewController {
             group.enter()
             SeoulDataManager.shared.fetchParkCongestionData(placeName: placeName) { data in
                 if let data = data {
-                    lock.lock()
+//                    lock.lock()
                     tempArray.append(contentsOf: data)
-                    lock.unlock()
+//                    lock.unlock()
                 }
                 group.leave()
             }
