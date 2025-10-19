@@ -13,7 +13,7 @@ import GooglePlaces
 class MainViewController: UIViewController{
     
     private var mapView: GMSMapView!
-    private var locationManager: CLLocationManager!
+    private let locationManager =  CLLocationManager()
     private var placesClient: GMSPlacesClient!
     private let sheetVC = SheetViewController()
     private var userLocation = CLLocationCoordinate2D(latitude:  0.0, longitude: 0.0)
@@ -22,7 +22,6 @@ class MainViewController: UIViewController{
     override func viewDidLoad() {
         print(#function)
         super.viewDidLoad()
-        locationManager = CLLocationManager()
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization() // 위치 권한 요청
         locationManager.startUpdatingLocation()
@@ -32,7 +31,15 @@ class MainViewController: UIViewController{
     private func settingMapView() {
         print(#function)
         let options = GMSMapViewOptions()
-        options.camera = GMSCameraPosition.camera(withLatitude: userLocation.latitude, longitude: userLocation.longitude, zoom: 15.0)
+        options.camera = GMSCameraPosition.camera(
+            withLatitude: userLocation.latitude,
+            longitude: userLocation.longitude,
+            zoom: 15.0)
+        
+        guard  mapView != nil else {
+            print("mapView 초기화 전")
+            return
+        }
         mapView = GMSMapView(options:options)
         mapView.settings.myLocationButton = true
         mapView.settings.scrollGestures = true
