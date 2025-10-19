@@ -14,20 +14,32 @@ class MainViewController: UIViewController{
     
     private var mapView: GMSMapView!
     private let locationManager =  CLLocationManager()
+    //지도 전담 객체
+    private let mapCoordinator = MapCoordinator()
     private var placesClient: GMSPlacesClient!
     private let sheetVC = SheetViewController()
     private var userLocation = CLLocationCoordinate2D(latitude:  0.0, longitude: 0.0)
     private var parkData: ParkLocation?
     
+    override func loadView() {
+        //앱이 켜지자 마차 맵 설정
+        self.view = mapView
+    }
+    
     override func viewDidLoad() {
         print(#function)
         super.viewDidLoad()
-        locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization() // 위치 권한 요청
-        locationManager.startUpdatingLocation()
-        locationManager.distanceFilter = 100
+        configureLocation()
     }
     
+    private func configureLocation() {
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters //원하는 정확도
+        locationManager.distanceFilter = 50
+        
+        //필터 선 적용 후 권한요청
+        locationManager.requestWhenInUseAuthorization()
+    }
     private func settingMapView() {
         print(#function)
         let options = GMSMapViewOptions()
