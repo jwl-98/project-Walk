@@ -99,29 +99,24 @@ class MainViewController: UIViewController{
                 //검색 결과에 따른 핀 생성
                 let marker = GMSMarker(position: result.coordinate)
                 marker.appearAnimation = .pop
-                
+                //마커 기본값
+                marker.iconView = MarkerImage.markerDefault
+
+
                 let deleteWhiteSpaceOfParkName = result.name!.filter { $0.isWhitespace == false }
                 SeoulDataManager.shared.fetchParkCongestionData(placeName: deleteWhiteSpaceOfParkName) { parkData in
                     guard let parkData = parkData?.first else { return }
                     
+                    let markerLevel = CongestionLevel(from: parkData.placeCongestLV)
+            
                     DispatchQueue.main.async {
-                        switch parkData.placeCongestLV {
-                        case "여유":
-                            marker.iconView = MarkerImage.markerGreen
-                        case "보통":
-                            marker.iconView = MarkerImage.markerYellow
-                        case "약간 붐빔":
-                            marker.iconView = MarkerImage.markerOrange
-                        case "붐빔":
-                            marker.iconView = MarkerImage.markerRed
-                        default:
-                            marker.iconView = MarkerImage.markerDefault
-                        }
+                        marker.iconView = markerLevel.markerIcon
                     }
                 }
-                marker.iconView = MarkerImage.markerDefault
+                
                 marker.title = result.name!
                 marker.map = self.mapView
+                //마커 생성시 플레이스 ID저장 
                 marker.userData = result.placeID
             }
         }
