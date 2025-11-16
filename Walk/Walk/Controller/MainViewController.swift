@@ -13,26 +13,45 @@ import GooglePlaces
 class MainViewController: UIViewController{
     
     private var mapView: GMSMapView!
-    private var locationManager: CLLocationManager!
+    private let locationManager =  CLLocationManager()
+    //지도 전담 객체
+    private let mapCoordinator = MapCoordinator()
     private var placesClient: GMSPlacesClient!
     private let sheetVC = SheetViewController()
     private var userLocation = CLLocationCoordinate2D(latitude:  0.0, longitude: 0.0)
     private var parkData: ParkLocation?
     
+    override func loadView() {
+        //앱이 켜지자 마차 맵 설정
+        self.view = mapView
+    }
+    
     override func viewDidLoad() {
         print(#function)
         super.viewDidLoad()
-        locationManager = CLLocationManager()
-        locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization() // 위치 권한 요청
-        locationManager.startUpdatingLocation()
-        locationManager.distanceFilter = 100
+        configureLocation()
     }
     
+    private func configureLocation() {
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters //원하는 정확도
+        locationManager.distanceFilter = 50
+        
+        //필터 선 적용 후 권한요청
+        locationManager.requestWhenInUseAuthorization()
+    }
     private func settingMapView() {
         print(#function)
         let options = GMSMapViewOptions()
-        options.camera = GMSCameraPosition.camera(withLatitude: userLocation.latitude, longitude: userLocation.longitude, zoom: 15.0)
+        options.camera = GMSCameraPosition.camera(
+            withLatitude: userLocation.latitude,
+            longitude: userLocation.longitude,
+            zoom: 15.0)
+        
+        guard  mapView != nil else {
+            print("mapView 초기화 전")
+            return
+        }
         mapView = GMSMapView(options:options)
         mapView.settings.myLocationButton = true
         mapView.settings.scrollGestures = true
@@ -80,29 +99,24 @@ class MainViewController: UIViewController{
                 //검색 결과에 따른 핀 생성
                 let marker = GMSMarker(position: result.coordinate)
                 marker.appearAnimation = .pop
-                
+                //마커 기본값
+                marker.iconView = MarkerImage.markerDefault
+
+
                 let deleteWhiteSpaceOfParkName = result.name!.filter { $0.isWhitespace == false }
                 SeoulDataManager.shared.fetchParkCongestionData(placeName: deleteWhiteSpaceOfParkName) { parkData in
                     guard let parkData = parkData?.first else { return }
                     
+                    let markerLevel = CongestionLevel(from: parkData.placeCongestLV)
+            
                     DispatchQueue.main.async {
-                        switch parkData.placeCongestLV {
-                        case "여유":
-                            marker.iconView = MarkerImage.markerGreen
-                        case "보통":
-                            marker.iconView = MarkerImage.markerYellow
-                        case "약간 붐빔":
-                            marker.iconView = MarkerImage.markerOrange
-                        case "붐빔":
-                            marker.iconView = MarkerImage.markerRed
-                        default:
-                            marker.iconView = MarkerImage.markerDefault
-                        }
+                        marker.iconView = markerLevel.markerIcon
                     }
                 }
-                marker.iconView = MarkerImage.markerDefault
+                
                 marker.title = result.name!
                 marker.map = self.mapView
+                //마커 생성시 플레이스 ID저장 
                 marker.userData = result.placeID
             }
         }
@@ -154,6 +168,15 @@ class MainViewController: UIViewController{
 extension MainViewController: GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
         
+        guard let title = marker.title else { return false }
+        
+        fetchParkDetailData(parkName: title, placeID: marker.userData as? String, location: marker.position) { [weak self] parkData in
+            guard let self = self else { return }
+            
+            
+        }
+        
+        
         print("핀이 눌렸음")
         
         //핀이 눌렸을 경우 sheet 표시
@@ -186,6 +209,19 @@ extension MainViewController: GMSMapViewDelegate {
             }
         }
         return true
+    }
+    private func fetchParkDetailData(
+        parkName: String,
+        placeID: String?,
+        location: CLLocationCoordinate2D,
+        completion: @escaping (ParkDetailData) -> Void
+    ) {
+        let group = DispatchGroup()
+        var parkImage: UIImage?
+        var congestionData: ParkCongestionDataModel?
+        var events: [Row]?
+        var facilities: [(String, String)]?
+        
     }
     
 }

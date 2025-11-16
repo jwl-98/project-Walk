@@ -94,9 +94,9 @@ class ListViewController: UIViewController {
             group.enter()
             SeoulDataManager.shared.fetchParkCongestionData(placeName: placeName) { data in
                 if let data = data {
-                    lock.lock()
+//                    lock.lock()
                     tempArray.append(contentsOf: data)
-                    lock.unlock()
+//                    lock.unlock()
                 }
                 group.leave()
             }
@@ -128,33 +128,19 @@ extension ListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ListCell", for: indexPath) as! CongestionListCell
-        let cellCongestionView = cell.parkCongestionView
-        cell.parkNameLabel.text = congestionDataArray[indexPath.row].placeName
-        cell.parkCongestionLabel.text = congestionDataArray[indexPath.row].placeCongestLV
+        let parkData = congestionDataArray[indexPath.row]
+        let level = CongestionLevel(from: parkData.placeCongestLV)
+        
+        cell.parkNameLabel.text = parkData.placeName
+        cell.parkCongestionLabel.text = level.displayText
+        cell.parkCongestionView.backgroundColor = level.backgroundColor
         cell.selectionStyle = .none
         
         guard let parkName = cell.parkNameLabel.text else { return cell }
         let url = URL(string: "https://data.seoul.go.kr/resources/img/guide/hotspot/\(parkName).jpg")
-      
-        
-        DispatchQueue.main.async {
             cell.parkImageView.kf.setImage(with: url)
             cell.parkImageView.kf.indicatorType = .activity
             
-            switch cell.parkCongestionLabel.text {
-            case "여유":
-                return
-            case "보통":
-                cellCongestionView.backgroundColor = Color.congestionNormal
-            case "약간 붐빔":
-                cellCongestionView.backgroundColor = Color.congestionMiddle
-            case "붐빔":
-                cellCongestionView.backgroundColor = Color.congestionLot
-            default:
-                return
-            }
-        }
-  
         return cell
     }
 }
