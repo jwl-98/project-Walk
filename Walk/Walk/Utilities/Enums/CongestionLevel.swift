@@ -16,6 +16,25 @@ enum CongestionLevel: String {
     case lot = "붐빔"
     case unknown = ""
     
+    //커스텀 생성자
+    init(from string: String?) {
+        guard let string = string,
+              let level = CongestionLevel(rawValue: string) else {
+            self = .unknown
+            return
+        }
+        self = level
+    }
+    
+    var displayText: String {
+        switch self {
+        case . unknown:
+            return "혼잡도 정보가 없어요😢"
+        default:
+            return self.rawValue
+        }
+    }
+    
     var backgroundColor: UIColor {
         switch self {
         case .relaxed:
@@ -46,5 +65,5 @@ enum CongestionLevel: String {
                return MarkerImage.markerDefault
            }
        }
-    
+
 }

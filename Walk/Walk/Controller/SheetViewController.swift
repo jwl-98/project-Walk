@@ -111,48 +111,34 @@ class SheetViewController: UIViewController {
             parkData in
             guard let parkData = parkData else {
                 DispatchQueue.main.async {
+                    let level = CongestionLevel.unknown
                     self.sheetView.congestionInfoButton.isHidden = true
-                    self.sheetView.congestionLable.text = "혼잡도 정보가 없어요😢"
-                    self.sheetView.congestionLable.backgroundColor = .white
+                    self.sheetView.congestionLable.text = level.displayText
+                    self.sheetView.congestionLable.backgroundColor = level.backgroundColor
+                    self.popVC.congestionMSGLable.text = "정보 없음"
                 }
                 return
-            }
-            parkData.forEach {
-                self.congestionLableText = $0.placeCongestLV ?? "혼잡도 정보가 없어요😢"
-                self.congestionMSG = $0.placeCongestMSG ?? "정보 없음"
             }
             
             print(self.congestionMSG)
             //붐빔,약간 붐빔, 보통, 여유
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else {return}
-                sheetView.congestionInfoButton.isHidden = false
-                print("혼잡도확인 : \(congestionLableText!) ")
                 
-                switch congestionLableText {
-                case "여유":
-                    sheetView.congestionLable.backgroundColor = Color.congestionRelex
-                    sheetView.congestionLable.text = self.congestionLableText
-                    popVC.congestionMSGLable.text = self.congestionMSG
-                case "보통":
-                    sheetView.congestionLable.backgroundColor = Color.congestionNormal
-                    sheetView.congestionLable.text = self.congestionLableText
-                    popVC.congestionMSGLable.text = self.congestionMSG
-                case "약간 붐빔":
-                    sheetView.congestionLable.backgroundColor = Color.congestionMiddle
-                    sheetView.congestionLable.text = self.congestionLableText
-                    popVC.congestionMSGLable.text = self.congestionMSG
-                case "붐빔":
-                    sheetView.congestionLable.backgroundColor = Color.congestionLot
-                    sheetView.congestionLable.text = self.congestionLableText
-                    popVC.congestionMSGLable.text = self.congestionMSG
-                default:
-                    break
-                }
+                let congestionLevel = CongestionLevel(from: self.congestionLableText)
+                //메세지 정보버튼 활성화
+                sheetView.congestionInfoButton.isHidden = true
+                //레이블 UI변경
+                sheetView.congestionLable.backgroundColor = congestionLevel.backgroundColor
+                //레이블 텍스트 변경
+                sheetView.congestionLable.text = congestionLevel.displayText
+                
+                print(#function)
+                print("혼잡도 레벨 확인: \(congestionLevel)")
             }
         }
     }
-    
+    //공원 이미지 가져오기
     func getParkImage(parkImage: UIImage) {
         DispatchQueue.main.async {
             self.sheetView.parkImageView.image = parkImage
@@ -181,23 +167,14 @@ class SheetViewController: UIViewController {
         }
     }
     
+    //혼잡도 정보 업데이트
     private func updateCongestionInfo(with data: ParkCongestionDataModel) {
-        //혼잡도 레이블 기본
-        sheetView.congestionInfoButton.isHidden = false
         
-        switch data.placeCongestLV {
-            case "여유":
-                sheetView.congestionLable.backgroundColor = Color.congestionRelex
-            case "보통":
-                sheetView.congestionLable.backgroundColor = Color.congestionNormal
-            case "약간 붐빔":
-                sheetView.congestionLable.backgroundColor = Color.congestionMiddle
-            case "붐빔":
-                sheetView.congestionLable.backgroundColor = Color.congestionLot
-            default:
-                break
-            }
-        sheetView.congestionLable.text = data.placeCongestLV
+        let congestionLevel = CongestionLevel(from: data.placeCongestLV)
+        
+        sheetView.congestionInfoButton.isHidden = false
+        sheetView.congestionLable.backgroundColor = congestionLevel.backgroundColor
+        sheetView.congestionLable.text = congestionLevel.displayText
         popVC.congestionMSGLable.text = data.placeCongestMSG
     }
     
