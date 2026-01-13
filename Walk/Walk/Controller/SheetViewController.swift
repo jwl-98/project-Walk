@@ -87,7 +87,7 @@ class SheetViewController: UIViewController {
     }
     
     func getParkData(parkName: String, location: CLLocationCoordinate2D) {
-        sheetView.parkNameLable.text = parkName
+        sheetView.parkNameLabel.text = parkName
         let deleteWhiteSpaceOfParkName = parkName.filter { $0.isWhitespace == false }
         
         print("위치 정보: \(location.latitude), \(location.longitude)")
