@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 class PopoverViewController: UIViewController {
-    let congestionMSGLable: UILabel = {
+    let congestionMSGLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16, weight: .semibold)
         label.textAlignment = .center
@@ -34,9 +34,9 @@ class PopoverViewController: UIViewController {
     }
     
     private func configureLabel() {
-        view.addSubview(congestionMSGLable)
+        view.addSubview(congestionMSGLabel)
         
-        congestionMSGLable.snp.makeConstraints {
+        congestionMSGLabel.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.equalToSuperview().offset(5)
             $0.trailing.equalToSuperview().inset(5)

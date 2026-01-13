@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 
 class CongestionListCell: UITableViewCell {
+    static let reuseIdentifier = "CongestionListCell"
     
     lazy var parkImageView: UIImageView = {
         let imageView = UIImageView()

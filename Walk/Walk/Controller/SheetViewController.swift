@@ -14,7 +14,7 @@ protocol ParkLocationDataSource: AnyObject {
 
 class SheetViewController: UIViewController {
     
-    var congestionLableText: String!
+    var congestionLabelText: String!
     var congestionMSG: String!
     weak var parkDataSource: ParkLocationDataSource?
     let sheetView = SheetView()
@@ -54,7 +54,7 @@ class SheetViewController: UIViewController {
     //버튼 동작 연결
     private func setupAddTarget() {
         let action = UIAction(handler: congestionInfoButtonTapped)
-        sheetView.tolietViewButton.addTarget(self, action: #selector(toiletButtonTapped), for: .touchUpInside)
+        sheetView.toiletViewButton.addTarget(self, action: #selector(toiletButtonTapped), for: .touchUpInside)
         sheetView.congestionInfoButton.addAction(action, for: .touchUpInside)
     }
     
@@ -113,9 +113,9 @@ class SheetViewController: UIViewController {
                 DispatchQueue.main.async {
                     let level = CongestionLevel.unknown
                     self.sheetView.congestionInfoButton.isHidden = true
-                    self.sheetView.congestionLable.text = level.displayText
-                    self.sheetView.congestionLable.backgroundColor = level.backgroundColor
-                    self.popVC.congestionMSGLable.text = "정보 없음"
+                    self.sheetView.congestionLabel.text = level.displayText
+                    self.sheetView.congestionLabel.backgroundColor = level.backgroundColor
+                    self.popVC.congestionMSGLabel.text = "정보 없음"
                 }
                 return
             }
@@ -125,13 +125,13 @@ class SheetViewController: UIViewController {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else {return}
                 
-                let congestionLevel = CongestionLevel(from: self.congestionLableText)
+                let congestionLevel = CongestionLevel(from: self.congestionLabelText)
                 //메세지 정보버튼 활성화
                 sheetView.congestionInfoButton.isHidden = true
                 //레이블 UI변경
-                sheetView.congestionLable.backgroundColor = congestionLevel.backgroundColor
+                sheetView.congestionLabel.backgroundColor = congestionLevel.backgroundColor
                 //레이블 텍스트 변경
-                sheetView.congestionLable.text = congestionLevel.displayText
+                sheetView.congestionLabel.text = congestionLevel.displayText
                 
                 print(#function)
                 print("혼잡도 레벨 확인: \(congestionLevel)")
@@ -173,9 +173,9 @@ class SheetViewController: UIViewController {
         let congestionLevel = CongestionLevel(from: data.placeCongestLV)
         
         sheetView.congestionInfoButton.isHidden = false
-        sheetView.congestionLable.backgroundColor = congestionLevel.backgroundColor
-        sheetView.congestionLable.text = congestionLevel.displayText
-        popVC.congestionMSGLable.text = data.placeCongestMSG
+        sheetView.congestionLabel.backgroundColor = congestionLevel.backgroundColor
+        sheetView.congestionLabel.text = congestionLevel.displayText
+        popVC.congestionMSGLabel.text = data.placeCongestMSG
     }
     
     //거리 계산후 예정시간 표시 해주는 함수
@@ -218,7 +218,7 @@ extension SheetViewController: UICollectionViewDelegate, UICollectionViewDataSou
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EventCell", for: indexPath) as? EventCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCell.reuseIdentifier, for: indexPath) as? EventCell else {
             return UICollectionViewCell()
         }
         
@@ -278,7 +278,7 @@ extension SheetViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "FacilityCell", for: indexPath) as? FacilityCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: FacilityCell.reuseIdentifier, for: indexPath) as? FacilityCell else {
             return UITableViewCell()
         }
         print(#function)

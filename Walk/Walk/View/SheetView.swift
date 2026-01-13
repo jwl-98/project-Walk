@@ -23,8 +23,8 @@ class SheetView: UIView {
         view.clipsToBounds = true
         view.layer.cornerRadius = CornerRadius.normal
         view.addSubview(parkImageView)
-        view.addSubview(congestionLable)
-        view.addSubview(parkNameLable)
+        view.addSubview(congestionLabel)
+        view.addSubview(parkNameLabel)
         
         return view
     }()
@@ -59,7 +59,7 @@ class SheetView: UIView {
     }()
     
     //혼잡도 레이블
-    lazy var congestionLable: UILabel = {
+    lazy var congestionLabel: UILabel = {
         var label = UILabel()
         label.text = "혼잡도 정보가 없어요😢"
         label.layer.cornerRadius  = CornerRadius.normal
@@ -81,7 +81,7 @@ class SheetView: UIView {
     }()
     
     //공원이름 레이블
-    var parkNameLable: UILabel = {
+    var parkNameLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 20, weight: .bold)
         label.text = "공원이름"
@@ -91,14 +91,14 @@ class SheetView: UIView {
     }()
     
     //MARK: - 화장실 탭
-     lazy var tolietViewButton: UIButton = {
+     lazy var toiletViewButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .clear
         
         return button
     }()
     
-    private let tolietSFIcon: UIImageView = {
+    private let toiletSFIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.tintColor = .white
         imageView.backgroundColor = .white
@@ -117,7 +117,7 @@ class SheetView: UIView {
         return imageView
     }()
     
-    private let tolietViewLabel: UILabel = {
+    private let toiletViewLabel: UILabel = {
         let label = UILabel()
         
         label.text = "화장실 위치 확인하기"
@@ -130,7 +130,7 @@ class SheetView: UIView {
     }()
     
     private lazy var stackViewForToilet: UIStackView = {
-        let st = UIStackView(arrangedSubviews: [tolietSFIcon,tolietViewLabel])
+        let st = UIStackView(arrangedSubviews: [toiletSFIcon,toiletViewLabel])
         st.distribution = .fill
         st.alignment = .center
         st.backgroundColor = Color.toiletBackGround
@@ -138,7 +138,7 @@ class SheetView: UIView {
         st.axis = .horizontal
         st.clipsToBounds = true
         st.layer.cornerRadius = CornerRadius.normal
-        st.addSubview(tolietViewButton)
+        st.addSubview(toiletViewButton)
         st.isLayoutMarginsRelativeArrangement = true
         
         return st
@@ -155,7 +155,7 @@ class SheetView: UIView {
 
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.register(EventCell.self, forCellWithReuseIdentifier: "EventCell")
+        collectionView.register(EventCell.self, forCellWithReuseIdentifier: EventCell.reuseIdentifier)
         collectionView.showsVerticalScrollIndicator = false
         //collectionView.backgroundColor = .red
         collectionView.contentInset = .zero
@@ -224,7 +224,7 @@ class SheetView: UIView {
     let facilitiesTableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .green
-        tableView.register(FacilityCell.self, forCellReuseIdentifier: "FacilityCell")
+        tableView.register(FacilityCell.self, forCellReuseIdentifier: FacilityCell.reuseIdentifier)
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.isScrollEnabled = true
@@ -311,7 +311,7 @@ class SheetView: UIView {
             $0.height.width.equalTo(150)
         }
         
-        congestionLable.snp.makeConstraints {
+        congestionLabel.snp.makeConstraints {
             $0.height.equalTo(34)
             $0.width.equalTo(180)
             $0.trailing.equalToSuperview().inset(Pedding.normal)
@@ -319,7 +319,7 @@ class SheetView: UIView {
             $0.leading.equalTo(parkImageView.snp.trailing).offset(Pedding.normal)
         }
         
-        parkNameLable.snp.makeConstraints {
+        parkNameLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.width.equalTo(174)
             $0.leading.equalTo(parkImageView.snp.trailing).offset(Pedding.normal)
@@ -329,7 +329,7 @@ class SheetView: UIView {
     private func toiletConfigureUI() {
         //self.addSubview(stackViewForToilet)
         
-        tolietViewButton.snp.makeConstraints {
+        toiletViewButton.snp.makeConstraints {
             $0.edges.equalTo(stackViewForToilet)
         }
         stackViewForToilet.snp.makeConstraints {
@@ -339,14 +339,14 @@ class SheetView: UIView {
             $0.width.equalTo(mainView.snp.width)
         }
         
-        tolietSFIcon.snp.makeConstraints {
+        toiletSFIcon.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(90)
 //            $0.leading.equalToSuperview().offset(Fedding.normal)
-           // $0.trailing.equalTo(tolietViewLabel.snp.leading).offset(20)
+           // $0.trailing.equalTo(toiletViewLabel.snp.leading).offset(20)
             $0.height.width.equalTo(28)
             $0.centerY.equalToSuperview()
         }
-        tolietViewLabel.snp.makeConstraints {
+        toiletViewLabel.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(10)
 //            $0.trailing.equalTo(rightSFIcon.snp.leading).offset(-10)
             //$0.centerY.equalToSuperview()
@@ -365,7 +365,7 @@ class SheetView: UIView {
         //[subView,sectionLabel].forEach {self.addSubview($0)}
         //섹션 레이블
         sectionLabel.snp.makeConstraints {
-            $0.top.equalTo(tolietViewButton.snp.bottom).offset(Pedding.normal)
+            $0.top.equalTo(toiletViewButton.snp.bottom).offset(Pedding.normal)
             $0.leading.equalTo(Pedding.normal)
         }
         //이벤트 컬렉션뷰
@@ -421,8 +421,8 @@ class SheetView: UIView {
        //self.addSubview(congestionInfoButton)
         
         congestionInfoButton.snp.makeConstraints {
-            $0.centerY.equalTo(congestionLable.snp.centerY)
-            $0.trailing.equalTo(congestionLable.snp.trailing).inset(20)
+            $0.centerY.equalTo(congestionLabel.snp.centerY)
+            $0.trailing.equalTo(congestionLabel.snp.trailing).inset(20)
             $0.width.height.equalTo(24)
         }
     }

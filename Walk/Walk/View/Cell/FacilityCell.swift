@@ -10,6 +10,7 @@ import UIKit
 
 // 시설 정보 셀 추가
 class FacilityCell: UITableViewCell {
+    static let reuseIdentifier = "FacilityCell"
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16, weight: .bold)

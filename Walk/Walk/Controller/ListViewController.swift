@@ -72,7 +72,7 @@ class ListViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.rowHeight = 250
-        tableView.register(CongestionListCell.self, forCellReuseIdentifier: "ListCell")
+        tableView.register(CongestionListCell.self, forCellReuseIdentifier: CongestionListCell.reuseIdentifier)
         tableView.backgroundColor = Color.lightGreen
     }
 //    
@@ -127,7 +127,7 @@ extension ListViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ListCell", for: indexPath) as! CongestionListCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: CongestionListCell.reuseIdentifier, for: indexPath) as! CongestionListCell
         let parkData = congestionDataArray[indexPath.row]
         let level = CongestionLevel(from: parkData.placeCongestLV)
         

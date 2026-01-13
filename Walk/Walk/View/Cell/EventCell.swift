@@ -9,6 +9,7 @@ import UIKit
 
 // MARK: - Event Collection View Cell
 class EventCell: UICollectionViewCell {
+    static let reuseIdentifier = "EventCell"
     private lazy var containerView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = CornerRadius.normal
